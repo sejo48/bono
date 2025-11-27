@@ -1,0 +1,386 @@
+import React, { useState } from 'react';
+import { Phone, Heart, Info, MessageCircle, Copy, CheckCircle, Home, Menu, X, Hammer, Stethoscope, Paintbrush, Users } from 'lucide-react';
+
+const App = () => {
+    const [activeTab, setActiveTab] = useState('inicio');
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showCopied, setShowCopied] = useState(false);
+
+    // Datos
+    const phone = "6193-5408";
+    const bankAccount = "106-08-000-125775-7";
+    const whatsappLink = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
+    const headerImage = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s320/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
+
+    const projects = [
+        { icon: Hammer, title: "Mejoras Físicas", desc: "Reparación integral del edificio y espacios comunes." },
+        { icon: Paintbrush, title: "Pintura Total", desc: "Embellecimiento y mantenimiento de todas las áreas." },
+        { icon: Stethoscope, title: "Equipamiento", desc: "Nuevo equipo médico y herramientas de fisioterapia." },
+        { icon: Users, title: "Bienestar", desc: "Programas de atención y mantenimiento general." },
+    ];
+
+    const bonds = [
+        { price: "₡10,000", color: "from-blue-50 to-blue-100 border-blue-200" },
+        { price: "₡25,000", color: "from-blue-100 to-blue-200 border-blue-300" },
+        { price: "₡50,000", color: "from-blue-200 to-blue-300 border-blue-400" },
+    ];
+
+    const copyToClipboard = () => {
+        const el = document.createElement('textarea');
+        el.value = bankAccount;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        setShowCopied(true);
+        setTimeout(() => setShowCopied(false), 2000);
+    };
+
+    // Renderizador de iconos auxiliar
+    const IconRender = ({ Icon, ...props }) => <Icon {...props} />;
+
+    const Navigation = () => (
+        <nav className="sticky top-0 z-50 transition-all duration-300 shadow-md bg-[#003366]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-20">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('inicio')}>
+                        <div className="bg-white p-2 rounded-full text-[#003366] transition-transform group-hover:scale-110">
+                            <Heart fill="#003366" size={24} />
+                        </div>
+                        <span className="font-bold text-lg leading-tight hidden sm:block text-white tracking-wide">
+                            Centro Diurno<br/>Hatillo-San Sebastián
+                        </span>
+                        <span className="font-bold text-lg sm:hidden text-white">Centro Diurno</span>
+                    </div>
+                    
+                    <div className="hidden md:block">
+                        <div className="ml-10 flex items-baseline space-x-6">
+                            {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
+                                <button
+                                    key={item}
+                                    onClick={() => setActiveTab(item.toLowerCase())}
+                                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                                        activeTab === item.toLowerCase() 
+                                        ? 'bg-white text-[#003366] shadow-lg transform -translate-y-0.5' 
+                                        : 'text-blue-100 hover:text-white hover:bg-white/10'
+                                    }`}
+                                >
+                                    {item}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="md:hidden">
+                        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-white hover:bg-white/10">
+                            {mobileMenuOpen ? <X /> : <Menu />}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            {/* Mobile Menu */}
+            {mobileMenuOpen && (
+                <div className="md:hidden bg-[#002a55] border-t border-blue-800">
+                    {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
+                        <button
+                            key={item}
+                            onClick={() => {
+                                setActiveTab(item.toLowerCase());
+                                setMobileMenuOpen(false);
+                            }}
+                            className="block w-full text-left px-6 py-4 text-blue-100 hover:bg-[#003366] hover:text-white border-b border-blue-800/50 font-medium"
+                        >
+                            {item}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </nav>
+    );
+
+    const Hero = () => (
+        <div className="relative h-[600px] flex items-center justify-center overflow-hidden">
+            {/* Imagen de fondo con overlay */}
+            <div 
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transform scale-105"
+                style={{ 
+                    backgroundImage: `url('${headerImage}')`,
+                }}
+            >
+                {/* Gradiente superpuesto para legibilidad */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#003366]/90 via-[#003366]/70 to-[#005b96]/40"></div>
+            </div>
+
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <div className="animate-fade-in-up">
+                    <span className="inline-block py-1 px-3 rounded-full bg-blue-500/30 border border-blue-400/30 text-blue-100 text-sm font-semibold tracking-wider mb-4 backdrop-blur-sm">
+                        AYÚDANOS A AYUDAR
+                    </span>
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight drop-shadow-lg">
+                        Invierte en <br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">Solidaridad</span>
+                    </h1>
+                    <p className="mt-4 text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
+                        Apoya a nuestros abuelitos adquiriendo Bonos de Solidaridad. <br className="hidden md:block"/>Tu aporte es deducible del impuesto de renta y transforma vidas.
+                    </p>
+                    <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button onClick={() => setActiveTab('donar')} className="w-full sm:w-auto px-8 py-4 bg-white text-[#003366] font-bold rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:bg-gray-50 transition-all transform hover:-translate-y-1 text-lg">
+                            Adquirir Bono
+                        </button>
+                        <button onClick={() => setActiveTab('proyectos')} className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all text-lg backdrop-blur-sm">
+                            Ver Proyectos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const ProjectsSection = () => (
+        <div className="py-20 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-3xl mx-auto mb-16">
+                    <h2 className="text-blue-600 font-bold tracking-wide uppercase text-sm mb-2">Transparencia y Acción</h2>
+                    <p className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
+                        Nuestros Objetivos
+                    </p>
+                    <p className="text-gray-500 text-lg">
+                        Cada colón donado se invierte directamente en mejorar la calidad de vida de nuestros adultos mayores.
+                    </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {projects.map((project, index) => (
+                        <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group">
+                            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#003366]/5 text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors duration-300">
+                                <IconRender Icon={project.icon} size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">{project.title}</h3>
+                            <p className="text-gray-500 leading-relaxed">
+                                {project.desc}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+
+    const DonationSection = () => (
+        <div className="relative py-20 bg-white overflow-hidden">
+            {/* Elemento decorativo de fondo */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-blue-100 rounded-full opacity-50 blur-3xl"></div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="text-center mb-16">
+                    <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">TU AYUDA CUENTA</span>
+                    <h2 className="text-4xl font-black text-[#003366] mb-4">Bonos de Solidaridad</h2>
+                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">Elige el monto de tu aporte y recibe beneficios fiscales mientras ayudas.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                    {bonds.map((bond, idx) => (
+                        <div key={idx} className={`relative rounded-3xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl bg-white border border-gray-100 shadow-xl group`}>
+                            <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${bond.color.split(' ')[0]} ${bond.color.split(' ')[1]}`}></div>
+                            <div className="p-8 flex flex-col h-full">
+                                <div className="mb-6">
+                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-2">Bono Solidario</p>
+                                    <h3 className="text-5xl font-black text-gray-800 tracking-tighter">{bond.price}</h3>
+                                </div>
+                                
+                                <div className="flex-grow">
+                                    <ul className="space-y-4 mb-8">
+                                        {[
+                                            "Deducible de renta",
+                                            "Certificado de donación",
+                                            "Ayuda directa"
+                                        ].map((item, i) => (
+                                            <li key={i} className="flex items-center text-gray-600">
+                                                <div className="mr-3 p-1 rounded-full bg-green-100 text-green-600">
+                                                    <CheckCircle size={14} strokeWidth={3} />
+                                                </div>
+                                                <span className="font-medium">{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <a 
+                                    href={whatsappLink} 
+                                    target="_blank" 
+                                    className="w-full block text-center py-4 rounded-xl bg-[#003366] text-white font-bold text-lg shadow-lg hover:bg-[#004080] transition-colors group-hover:shadow-[#003366]/25"
+                                >
+                                    Solicitar ahora
+                                </a>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="max-w-4xl mx-auto bg-gradient-to-br from-[#003366] to-[#005b96] rounded-3xl p-1 shadow-2xl">
+                    <div className="bg-white rounded-[22px] p-8 md:p-12">
+                        <div className="flex flex-col md:flex-row items-center gap-8">
+                            <div className="bg-blue-50 p-6 rounded-2xl">
+                                <Home size={48} className="text-[#003366]" />
+                            </div>
+                            <div className="flex-grow text-center md:text-left">
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Transferencia Bancaria</h3>
+                                <p className="text-gray-500 mb-4">Banco Nacional de Costa Rica</p>
+                                <div className="bg-gray-100 p-4 rounded-xl inline-block w-full">
+                                    <p className="font-mono text-xl md:text-3xl font-bold text-[#003366] tracking-tight truncate">
+                                        {bankAccount}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex-shrink-0">
+                                <button 
+                                    onClick={copyToClipboard}
+                                    className={`flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-lg transition-all ${
+                                        showCopied 
+                                        ? 'bg-green-500 text-white shadow-green-500/30 shadow-lg' 
+                                        : 'bg-[#003366] text-white hover:bg-[#004080] shadow-blue-900/30 shadow-lg'
+                                    }`}
+                                >
+                                    {showCopied ? <CheckCircle size={24}/> : <Copy size={24}/>}
+                                    {showCopied ? "¡Listo!" : "Copiar"}
+                                </button>
+                            </div>
+                        </div>
+                        <p className="mt-6 text-center text-sm text-gray-400">
+                            * Por favor envía tu comprobante al WhatsApp para generar tu certificado digital deducible de impuestos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const Footer = () => (
+        <footer className="bg-[#002a55] text-white pt-20 pb-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                    <div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="bg-white/10 p-2 rounded-lg">
+                                <Heart className="text-blue-300" size={24}/>
+                            </div>
+                            <h4 className="text-xl font-bold">Nuestra Misión</h4>
+                        </div>
+                        <p className="text-blue-200/80 leading-relaxed">
+                            Brindar amor, cuidado y calidad de vida a los adultos mayores de Hatillo y San Sebastián, creando un espacio digno y lleno de esperanza.
+                        </p>
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="bg-white/10 p-2 rounded-lg">
+                                <Phone className="text-blue-300" size={24}/>
+                            </div>
+                            <h4 className="text-xl font-bold">Contacto Directo</h4>
+                        </div>
+                        <p className="text-blue-200/80 mb-2 font-mono text-lg">{phone}</p>
+                        <a href={whatsappLink} target="_blank" className="inline-flex items-center text-white font-semibold hover:text-blue-300 transition-colors border-b border-transparent hover:border-blue-300 pb-1">
+                            Enviar mensaje por WhatsApp <span className="ml-2">→</span>
+                        </a>
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="bg-white/10 p-2 rounded-lg">
+                                <Info className="text-blue-300" size={24}/>
+                            </div>
+                            <h4 className="text-xl font-bold">Visítanos</h4>
+                        </div>
+                        <p className="text-blue-200/80">
+                            Hatillo, San José, Costa Rica.<br/>
+                            Abierto de Lunes a Viernes.
+                        </p>
+                    </div>
+                </div>
+                <div className="border-t border-white/10 pt-8 text-center">
+                    <p className="text-blue-400 text-sm">
+                        © 2025 Centro Diurno Hatillo-San Sebastián. <br className="sm:hidden"/> Todos los derechos reservados.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    );
+
+    const FloatingWhatsApp = () => (
+        <a 
+            href={whatsappLink}
+            target="_blank"
+            className="fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:bg-[#20bd5a] transition-all transform hover:scale-110 hover:-translate-y-1 z-50 flex items-center gap-3 group"
+            aria-label="Chat en WhatsApp"
+        >
+            <MessageCircle size={32} />
+            <span className="hidden md:inline font-bold pr-2">Chatear</span>
+            <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></span>
+        </a>
+    );
+
+    return (
+        <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+            <style>
+                {`
+                    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+                    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+                    .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+                    @keyframes fadeInUp {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `}
+            </style>
+            <Navigation />
+            
+            <div className="flex-grow">
+                {activeTab === 'inicio' && (
+                    <>
+                        <Hero />
+                        <ProjectsSection />
+                        <DonationSection />
+                    </>
+                )}
+                {activeTab === 'proyectos' && (
+                    <div className="animate-fade-in-up">
+                         {/* Reutilizamos el estilo del Hero pero más corto para subpáginas */}
+                         <div className="bg-[#003366] py-20 text-center text-white">
+                            <h1 className="text-4xl font-bold">Nuestros Proyectos</h1>
+                            <p className="text-blue-200 mt-4">Transparencia en cada acción</p>
+                         </div>
+                         <ProjectsSection />
+                    </div>
+                )}
+                {activeTab === 'donar' && (
+                    <div className="animate-fade-in-up">
+                        <div className="bg-[#003366] py-20 text-center text-white">
+                            <h1 className="text-4xl font-bold">Haz tu Donación</h1>
+                            <p className="text-blue-200 mt-4">Tu aporte hace la diferencia</p>
+                         </div>
+                        <DonationSection />
+                    </div>
+                )}
+                {activeTab === 'contacto' && (
+                    <div className="py-20 text-center animate-fade-in-up min-h-[60vh] flex flex-col justify-center items-center bg-gray-50">
+                        <h2 className="text-4xl font-black text-[#003366] mb-8">Contáctanos</h2>
+                        <p className="text-xl text-gray-600 mb-12 max-w-2xl">Estamos aquí para responder tus dudas y guiarte en tu proceso de colaboración.</p>
+                        <div className="bg-white p-12 rounded-3xl shadow-xl border border-gray-100 max-w-lg w-full">
+                            <p className="text-sm text-gray-400 uppercase font-bold tracking-widest mb-4">Llámanos o escríbenos</p>
+                            <p className="text-4xl font-black text-gray-800 mb-8">{phone}</p>
+                            <a href={whatsappLink} className="inline-flex justify-center items-center w-full py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition-colors shadow-lg shadow-green-500/20 gap-2">
+                                <MessageCircle size={24}/>
+                                WhatsApp Directo
+                            </a>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <Footer />
+            <FloatingWhatsApp />
+        </div>
+    );
+};
+
+export default App;
