@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
+    
+    <!-- ETIQUETAS PARA WHATSAPP Y REDES SOCIALES (Open Graph) -->
+    <meta property="og:title" content="Centro Diurno Hatillo-San Sebastián: ¡Regala apoyo, recibí esperanza!">
+    <meta property="og:description" content="Apoya a nuestros adultos mayores adquiriendo Bonos de Solidaridad deducibles de renta. Tu ayuda transforma vidas.">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s320/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg">
+    <meta property="og:url" content="https://centrodiurnohatillo.com"> <!-- Pon aquí tu dirección web real cuando la tengas -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CR">
+    
     <title>Centro Diurno de Ancianos Hatillo-San Sebastián</title>
     
     <!-- Tailwind CSS -->
@@ -55,7 +64,8 @@
             Stethoscope: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>,
             Users: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
             Zap: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
-            Armchair: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg>
+            Armchair: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg>,
+            Facebook: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
         };
 
         const App = () => {
@@ -67,6 +77,7 @@
             const phone = "6193-5408";
             const bankAccount = "100-01-000-125775-7";
             const whatsappLink = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
+            const facebookLink = "https://www.facebook.com/centroancianos.hatillosansebastian?locale=es_LA";
             const headerImage = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s320/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
 
             // Secciones y Datos detallados
@@ -337,8 +348,11 @@
                                     <h4 className="text-xl font-bold">Contacto Directo</h4>
                                 </div>
                                 <p className="text-blue-200/80 mb-2 font-mono text-lg">{phone}</p>
-                                <a href={whatsappLink} target="_blank" className="inline-flex items-center text-white font-semibold hover:text-blue-300 transition-colors border-b border-transparent hover:border-blue-300 pb-1">
+                                <a href={whatsappLink} target="_blank" className="inline-flex items-center text-white font-semibold hover:text-blue-300 transition-colors border-b border-transparent hover:border-blue-300 pb-1 mb-2">
                                     Enviar mensaje por WhatsApp <span className="ml-2">→</span>
+                                </a>
+                                <a href={facebookLink} target="_blank" className="inline-flex items-center text-white font-semibold hover:text-blue-300 transition-colors border-b border-transparent hover:border-blue-300 pb-1">
+                                    <Icons.Facebook className="mr-2 text-blue-300" size={20} /> Visítanos en Facebook
                                 </a>
                             </div>
                             <div>
@@ -376,7 +390,8 @@
                 </a>
             );
 
-            return (
+            // Estructura Principal
+            const Main = () => (
                 <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
                     <Navigation />
                     <div className="flex-grow">
@@ -424,10 +439,11 @@
                     <FloatingWhatsApp />
                 </div>
             );
-        };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<Main />);
+        };
+        App();
     </script>
 </body>
 </html>
