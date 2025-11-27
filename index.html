@@ -53,7 +53,9 @@
             Hammer: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V2.46V2a2 2 0 0 0-2-2h-3c-1.1 0-2 .9-2 2v3.74c0 1.05-.6 2.05-1.5 2.6L4.16 12.1"/></svg>,
             Paintbrush: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/><path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/><path d="M14.5 17.5 4.5 15"/></svg>,
             Stethoscope: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>,
-            Users: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Users: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            Zap: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
+            Armchair: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg>
         };
 
         const App = () => {
@@ -63,16 +65,18 @@
 
             // Datos
             const phone = "6193-5408";
-            const bankAccount = "106-08-000-125775-7";
+            const bankAccount = "100-01-000-125775-7";
             const whatsappLink = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
             const headerImage = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s320/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
 
-            // Secciones y Datos
+            // Secciones y Datos detallados
             const projects = [
-                { icon: Icons.Hammer, title: "Mejoras Físicas", desc: "Reparación integral del edificio y espacios comunes." },
-                { icon: Icons.Paintbrush, title: "Pintura Total", desc: "Embellecimiento y mantenimiento de todas las áreas." },
-                { icon: Icons.Stethoscope, title: "Equipamiento", desc: "Nuevo equipo médico y herramientas de fisioterapia." },
-                { icon: Icons.Users, title: "Bienestar", desc: "Programas de atención y mantenimiento general." },
+                { icon: Icons.Hammer, title: "Estructura", desc: "Cambio de techos, canoas y cielo rasos." },
+                { icon: Icons.Paintbrush, title: "Embellecimiento", desc: "Pintura total de las instalaciones." },
+                { icon: Icons.Home, title: "Infraestructura", desc: "Reparación de pisos y mantenimiento general." },
+                { icon: Icons.Zap, title: "Electricidad", desc: "Cambio total de instalaciones eléctricas." },
+                { icon: Icons.Armchair, title: "Mobiliario", desc: "Compra de nuevo mobiliario para el centro." },
+                { icon: Icons.Stethoscope, title: "Salud", desc: "Compra de equipos de fisioterapia." },
             ];
 
             const bonds = [
@@ -165,18 +169,19 @@
                     <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                         <div className="animate-fade-in-up">
                             <span className="inline-block py-1 px-3 rounded-full bg-blue-500/30 border border-blue-400/30 text-blue-100 text-sm font-semibold tracking-wider mb-4 backdrop-blur-sm">
-                                AYÚDANOS A AYUDAR
+                                SOMOS UNA ORGANIZACIÓN SIN FINES DE LUCRO
                             </span>
                             <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight drop-shadow-lg">
-                                Invierte en <br/>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">Solidaridad</span>
+                                ¡Regala apoyo, <br/>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">recibí esperanza!</span>
                             </h1>
                             <p className="mt-4 text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-                                Apoya a nuestros abuelitos adquiriendo Bonos de Solidaridad. <br className="hidden md:block"/>Tu aporte es deducible del impuesto de renta y transforma vidas.
+                                Dedicada al bienestar integral de los adultos mayores. <br className="hidden md:block"/>
+                                Si nos ayudas, podremos realizar grandes proyectos.
                             </p>
                             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
                                 <button onClick={() => setActiveTab('donar')} className="w-full sm:w-auto px-8 py-4 bg-white text-[#003366] font-bold rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:bg-gray-50 transition-all transform hover:-translate-y-1 text-lg">
-                                    Adquirir Bono
+                                    Quiero Apoyar
                                 </button>
                                 <button onClick={() => setActiveTab('proyectos')} className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all text-lg backdrop-blur-sm">
                                     Ver Proyectos
@@ -196,11 +201,11 @@
                                 Nuestros Objetivos
                             </p>
                             <p className="text-gray-500 text-lg">
-                                Cada colón donado se invierte directamente en mejorar la calidad de vida de nuestros adultos mayores.
+                                Tu ayuda se invierte directamente en estas mejoras:
                             </p>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {projects.map((project, index) => (
                                 <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group">
                                     <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#003366]/5 text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors duration-300">
@@ -224,9 +229,12 @@
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <div className="text-center mb-16">
-                            <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">TU AYUDA CUENTA</span>
-                            <h2 className="text-4xl font-black text-[#003366] mb-4">Bonos de Solidaridad</h2>
-                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Elige el monto de tu aporte y recibe beneficios fiscales mientras ayudas.</p>
+                            <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">DEDUCIBLE DE RENTA</span>
+                            <h2 className="text-4xl font-black text-[#003366] mb-4">Formas de Apoyar</h2>
+                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                                Si eres contribuyente, tu aporte es deducible. <br/>
+                                <span className="font-bold">¡También puedes ser Padrino o Madrina!</span> Apóyanos con una cuota voluntaria mensual o en especie.
+                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
@@ -318,7 +326,7 @@
                                     <h4 className="text-xl font-bold">Nuestra Misión</h4>
                                 </div>
                                 <p className="text-blue-200/80 leading-relaxed">
-                                    Brindar amor, cuidado y calidad de vida a los adultos mayores de Hatillo y San Sebastián, creando un espacio digno y lleno de esperanza.
+                                    Somos una organización sin fines de lucro, dedicada al bienestar integral de los adultos mayores de Hatillo y San Sebastián.
                                 </p>
                             </div>
                             <div>
@@ -368,7 +376,6 @@
                 </a>
             );
 
-            // Cambiamos el retorno directo en App por un layout claro
             return (
                 <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
                     <Navigation />
