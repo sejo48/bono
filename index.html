@@ -28,12 +28,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        :root {
-            --primary: #003366;
-            --primary-light: #004a94;
-            --accent: #FFD700; /* Un toque dorado para resaltar acciones */
-        }
-
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             -webkit-font-smoothing: antialiased;
@@ -41,11 +35,8 @@
             overflow-x: hidden;
         }
         
-        /* Animaciones suaves */
-        .fade-in-up {
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
+        .animate-fade-in-up { 
+            animation: fadeInUp 0.8s ease-out forwards; 
         }
         
         @keyframes fadeInUp {
@@ -53,27 +44,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-
-        /* Efecto Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
         .glass-dark {
-            background: rgba(0, 51, 102, 0.9);
+            background: rgba(0, 51, 102, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
 
-        /* Mejora para el scroll */
         html { scroll-behavior: smooth; }
-        
-        /* Botones táctiles mejorados */
         button, a { touch-action: manipulation; }
     </style>
 </head>
@@ -90,7 +67,6 @@
         const BANK_ACCOUNT = "100-01-000-125775-7";
         const FACEBOOK_LINK = "https://www.facebook.com/centrodhss";
         const LOGO_URL = "https://centrohatillosansebastiancr.netlify.app/static/media/Logo.538549bdc6f39bf49a25.png";
-        // Intentamos cargar la versión de alta calidad cambiando s320 por s1600
         const HEADER_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s1600/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
         const WHATSAPP_LINK = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
 
@@ -123,7 +99,7 @@
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo y Nombre */}
-                        <div className="flex items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveTab('inicio'); setMobileMenuOpen(false); window.scrollTo(0,0); }}>
+                        <div className="flex items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveTab('inicio'); setMobileMenuOpen(false); }}>
                             <div className="bg-white/90 p-1.5 rounded-full shadow-lg transition-transform group-hover:scale-105">
                                 <img src={LOGO_URL} alt="Logo" className="w-10 h-10 object-contain" />
                             </div>
@@ -446,6 +422,11 @@
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const [showCopied, setShowCopied] = useState(false);
 
+            // Efecto para hacer scroll arriba al cambiar de pestaña
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, [activeTab]);
+
             const copyToClipboard = () => {
                 const el = document.createElement('textarea');
                 el.value = BANK_ACCOUNT;
@@ -494,7 +475,7 @@
                             </div>
                         )}
                         {activeTab === 'contacto' && (
-                            <div className="min-h-[80vh] flex flex-col justify-center items-center bg-gray-50 py-12 px-4 sm:px-6">
+                            <div className="pt-24 pb-20 px-4 sm:px-6 bg-gray-50 flex justify-center items-start min-h-[80vh]">
                                 <div className="max-w-4xl w-full fade-in-up">
                                     <div className="text-center mb-12">
                                         <h2 className="text-4xl md:text-5xl font-black text-[#003366] mb-4">Contáctanos</h2>
@@ -503,7 +484,7 @@
 
                                     <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
                                         <div className="grid md:grid-cols-2">
-                                            <div className="p-10 md:p-14 space-y-10">
+                                            <div className="p-8 md:p-14 space-y-10">
                                                 <div>
                                                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Ubicación</p>
                                                     <p className="text-2xl font-bold text-gray-800 leading-snug">{ADDRESS}</p>
@@ -520,11 +501,11 @@
                                                     </div>
                                                 </div>
 
-                                                <div>
+                                                <div className="w-full overflow-hidden">
                                                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Correo Electrónico</p>
-                                                    <div className="space-y-1">
+                                                    <div className="space-y-2">
                                                         {EMAILS.map((email, i) => (
-                                                            <a key={i} href={`mailto:${email}`} className="block text-lg font-medium text-blue-600 hover:underline truncate">
+                                                            <a key={i} href={`mailto:${email}`} className="block text-lg md:text-xl font-medium text-blue-600 hover:underline break-words">
                                                                 {email}
                                                             </a>
                                                         ))}
