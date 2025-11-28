@@ -2,7 +2,7 @@
 <html lang="es" translate="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     
     <!-- ETIQUETAS PARA WHATSAPP Y REDES SOCIALES (Open Graph) -->
@@ -27,31 +27,72 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        
+        :root {
+            --primary: #003366;
+            --primary-light: #004a94;
+            --accent: #FFD700; /* Un toque dorado para resaltar acciones */
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        
+        /* Animaciones suaves */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* Efecto Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 51, 102, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Mejora para el scroll */
+        html { scroll-behavior: smooth; }
+        
+        /* Botones táctiles mejorados */
+        button, a { touch-action: manipulation; }
     </style>
 </head>
-<body class="bg-white text-gray-900 notranslate">
+<body class="bg-gray-50 text-gray-900 notranslate">
     <div id="root"></div>
 
     <script type="text/babel" class="notranslate" data-no-optimize="1">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
         // --- DATOS CONSTANTES ---
-        const PHONE = "2214-1572";
+        const PHONES = ["2254-3795", "6193-5408"]; 
         const ADDRESS = "Av. 46, San José, Kennedy";
         const EMAILS = ["centrodhss@hotmail.com", "centrodhatillosansebastian@gmail.com"];
         const BANK_ACCOUNT = "100-01-000-125775-7";
         const FACEBOOK_LINK = "https://www.facebook.com/centrodhss";
         const LOGO_URL = "https://centrohatillosansebastiancr.netlify.app/static/media/Logo.538549bdc6f39bf49a25.png";
-        const HEADER_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s320/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
-        // WhatsApp se mantiene apuntando al fijo, según última instrucción, o se puede eliminar si se prefiere solo teléfono.
-        // Asumo que mantenemos el enlace pero con el número fijo si tienen WhatsApp Business Landline.
-        const WHATSAPP_LINK = `https://wa.me/50622141572?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
+        // Intentamos cargar la versión de alta calidad cambiando s320 por s1600
+        const HEADER_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s1600/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
+        const WHATSAPP_LINK = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
 
         // --- ICONOS ---
         const Icons = {
@@ -60,6 +101,7 @@
             Info: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>,
             Mail: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
             MapPin: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+            MessageCircle: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
             Copy: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>,
             CheckCircle: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
             Home: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -77,28 +119,31 @@
         // --- COMPONENTES INDEPENDIENTES ---
 
         const Navigation = ({ activeTab, setActiveTab, mobileMenuOpen, setMobileMenuOpen }) => (
-            <nav className="sticky top-0 z-50 transition-all duration-300 shadow-md bg-[#003366]">
+            <nav className="fixed w-full top-0 z-50 glass-dark shadow-xl transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
-                        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('inicio')}>
-                            <div className="bg-white p-2 rounded-full text-[#003366] transition-transform group-hover:scale-110 flex items-center justify-center">
+                        {/* Logo y Nombre */}
+                        <div className="flex items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveTab('inicio'); setMobileMenuOpen(false); window.scrollTo(0,0); }}>
+                            <div className="bg-white/90 p-1.5 rounded-full shadow-lg transition-transform group-hover:scale-105">
                                 <img src={LOGO_URL} alt="Logo" className="w-10 h-10 object-contain" />
                             </div>
-                            <span className="font-bold text-lg leading-tight hidden sm:block text-white tracking-wide">
+                            <span className="font-bold text-lg leading-tight hidden sm:block text-white tracking-wide drop-shadow-md">
                                 Centro Diurno<br/>Hatillo-San Sebastián
                             </span>
-                            <span className="font-bold text-lg sm:hidden text-white">Centro Diurno</span>
+                            <span className="font-bold text-lg sm:hidden text-white drop-shadow-md">CDHS</span>
                         </div>
+                        
+                        {/* Menú Desktop */}
                         <div className="hidden md:block">
-                            <div className="ml-10 flex items-baseline space-x-6">
+                            <div className="ml-10 flex items-baseline space-x-2">
                                 {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
                                     <button
                                         key={item}
                                         onClick={() => setActiveTab(item.toLowerCase())}
-                                        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                                        className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 ${
                                             activeTab === item.toLowerCase() 
-                                            ? 'bg-white text-[#003366] shadow-lg transform -translate-y-0.5' 
-                                            : 'text-blue-100 hover:text-white hover:bg-white/10'
+                                            ? 'bg-white text-[#003366] shadow-lg scale-105' 
+                                            : 'text-blue-100 hover:bg-white/10 hover:text-white'
                                         }`}
                                     >
                                         {item}
@@ -106,15 +151,23 @@
                                 ))}
                             </div>
                         </div>
+
+                        {/* Botón Menú Móvil */}
                         <div className="md:hidden">
-                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-white hover:bg-white/10">
-                                {mobileMenuOpen ? <Icons.X /> : <Icons.Menu />}
+                            <button 
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+                                className="p-2.5 rounded-xl text-white hover:bg-white/10 transition-colors"
+                                aria-label="Menú principal"
+                            >
+                                {mobileMenuOpen ? <Icons.X size={28} /> : <Icons.Menu size={28} />}
                             </button>
                         </div>
                     </div>
                 </div>
-                {mobileMenuOpen && (
-                    <div className="md:hidden bg-[#002a55] border-t border-blue-800">
+                
+                {/* Menú Móvil Desplegable */}
+                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="bg-[#002a55] border-t border-blue-800/50 shadow-inner px-4 py-4 space-y-2">
                         {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
                             <button
                                 key={item}
@@ -122,42 +175,55 @@
                                     setActiveTab(item.toLowerCase());
                                     setMobileMenuOpen(false);
                                 }}
-                                className="block w-full text-left px-6 py-4 text-blue-100 hover:bg-[#003366] hover:text-white border-b border-blue-800/50 font-medium"
+                                className={`block w-full text-left px-4 py-3.5 rounded-xl font-medium transition-colors ${
+                                    activeTab === item.toLowerCase() 
+                                    ? 'bg-white/10 text-white border-l-4 border-white pl-3' 
+                                    : 'text-blue-200 hover:bg-white/5 hover:text-white'
+                                }`}
                             >
                                 {item}
                             </button>
                         ))}
                     </div>
-                )}
+                </div>
             </nav>
         );
 
         const Hero = ({ setActiveTab }) => (
-            <div className="relative h-[600px] flex items-center justify-center overflow-hidden">
-                <div 
-                    className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transform scale-105"
-                    style={{ backgroundImage: `url('${HEADER_IMAGE}')` }}
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#003366]/90 via-[#003366]/70 to-[#005b96]/40"></div>
+            <div className="relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-20">
+                {/* Fondo con imagen y overlay */}
+                <div className="absolute inset-0 z-0">
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-[20s] hover:scale-110"
+                        style={{ backgroundImage: `url('${HEADER_IMAGE}')` }}
+                    ></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/95 via-[#003366]/80 to-transparent"></div>
                 </div>
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                    <div className="animate-fade-in-up">
-                        <span className="inline-block py-1 px-3 rounded-full bg-blue-500/30 border border-blue-400/30 text-blue-100 text-sm font-semibold tracking-wider mb-4 backdrop-blur-sm">
-                            SOMOS UNA ORGANIZACIÓN SIN FINES DE LUCRO
+
+                <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center text-white w-full">
+                    <div className="fade-in-up">
+                        <span className="inline-block py-1.5 px-4 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-100 text-xs sm:text-sm font-bold tracking-widest mb-6 backdrop-blur-sm uppercase">
+                            Organización sin fines de lucro
                         </span>
-                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight drop-shadow-lg">
-                            ¡Regala apoyo, <br/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">recibí esperanza!</span>
+                        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tight mb-6 leading-tight drop-shadow-2xl">
+                            Regala apoyo,<br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200">recibí esperanza</span>
                         </h1>
-                        <p className="mt-4 text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-                            Dedicada al bienestar integral de los adultos mayores. <br className="hidden md:block"/>
-                            Si nos ayudas, podremos realizar grandes proyectos.
+                        <p className="mt-6 text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
+                            Dedicada al bienestar integral de los adultos mayores.<br className="hidden md:block"/>
+                            Tu ayuda hace realidad nuestros proyectos.
                         </p>
-                        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <button onClick={() => setActiveTab('donar')} className="w-full sm:w-auto px-8 py-4 bg-white text-[#003366] font-bold rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:bg-gray-50 transition-all transform hover:-translate-y-1 text-lg">
+                        <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <button 
+                                onClick={() => setActiveTab('donar')} 
+                                className="w-full sm:w-auto px-10 py-4 bg-white text-[#003366] font-bold rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:bg-gray-50 transition-all transform hover:-translate-y-1 active:scale-95 text-lg"
+                            >
                                 Quiero Apoyar
                             </button>
-                            <button onClick={() => setActiveTab('proyectos')} className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all text-lg backdrop-blur-sm">
+                            <button 
+                                onClick={() => setActiveTab('proyectos')} 
+                                className="w-full sm:w-auto px-10 py-4 bg-transparent border-2 border-white/80 text-white font-bold rounded-full hover:bg-white/10 transition-all text-lg backdrop-blur-sm active:scale-95"
+                            >
                                 Ver Proyectos
                             </button>
                         </div>
@@ -176,21 +242,25 @@
                 { icon: Icons.Stethoscope, title: "Salud", desc: "Compra de equipos de fisioterapia." },
             ];
             return (
-                <div className="py-20 bg-gray-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center max-w-3xl mx-auto mb-16">
-                            <h2 className="text-blue-600 font-bold tracking-wide uppercase text-sm mb-2">Transparencia y Acción</h2>
-                            <p className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Nuestros Objetivos</p>
-                            <p className="text-gray-500 text-lg">Tu ayuda se invierte directamente en estas mejoras:</p>
+                <div className="py-24 bg-gray-50">
+                    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+                        <div className="text-center max-w-3xl mx-auto mb-20 fade-in-up">
+                            <h2 className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3">Transparencia y Acción</h2>
+                            <p className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 tracking-tight">Nuestros Objetivos</p>
+                            <p className="text-gray-600 text-xl">Tu ayuda se invierte directamente en estas mejoras tangibles:</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {projects.map((project, index) => (
-                                <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group">
-                                    <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#003366]/5 text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors duration-300">
+                                <div 
+                                    key={index} 
+                                    className="bg-white rounded-[2rem] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group fade-in-up"
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                    <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors duration-300 shadow-sm">
                                         <project.icon size={32} />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-3">{project.title}</h3>
-                                    <p className="text-gray-500 leading-relaxed">{project.desc}</p>
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#003366] transition-colors">{project.title}</h3>
+                                    <p className="text-gray-500 leading-relaxed text-lg">{project.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -206,70 +276,97 @@
                 { price: "₡50,000", color: "from-blue-200 to-blue-300 border-blue-400" },
             ];
             return (
-                <div className="relative py-20 bg-white overflow-hidden">
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-blue-100 rounded-full opacity-50 blur-3xl"></div>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                        <div className="text-center mb-16">
-                            <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">DEDUCIBLE DE RENTA</span>
-                            <h2 className="text-4xl font-black text-[#003366] mb-4">Formas de Apoyar</h2>
-                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                                Si eres contribuyente, tu aporte es deducible. <br/>
-                                <span className="font-bold">¡También puedes ser Padrino o Madrina!</span> Apóyanos con una cuota voluntaria mensual o en especie.
+                <div className="relative py-24 bg-white overflow-hidden">
+                    {/* Decoración de fondo */}
+                    <div className="absolute top-0 right-0 -mr-40 -mt-40 w-[600px] h-[600px] bg-blue-50 rounded-full opacity-60 blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-[500px] h-[500px] bg-blue-100 rounded-full opacity-60 blur-3xl pointer-events-none"></div>
+
+                    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+                        <div className="text-center mb-20 fade-in-up">
+                            <span className="inline-block py-1.5 px-4 rounded-full bg-green-100 text-green-700 text-sm font-bold mb-4 tracking-wide">100% DEDUCIBLE DE RENTA</span>
+                            <h2 className="text-4xl sm:text-5xl font-black text-[#003366] mb-6 tracking-tight">Tu Aporte Transforma</h2>
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                                Puedes adquirir un bono, ser padrino/madrina o apoyarnos con una cuota mensual voluntaria.
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                             {bonds.map((bond, idx) => (
-                                <div key={idx} className={`relative rounded-3xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl bg-white border border-gray-100 shadow-xl group`}>
-                                    <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${bond.color.split(' ')[0]} ${bond.color.split(' ')[1]}`}></div>
-                                    <div className="p-8 flex flex-col h-full">
-                                        <div className="mb-6">
-                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-2">Bono Solidario</p>
+                                <div 
+                                    key={idx} 
+                                    className={`relative rounded-[2rem] overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl bg-white border border-gray-100 shadow-xl group fade-in-up`}
+                                    style={{ animationDelay: `${idx * 150}ms` }}
+                                >
+                                    <div className={`absolute top-0 left-0 w-full h-3 bg-gradient-to-r ${bond.color.split(' ')[0]} ${bond.color.split(' ')[1]}`}></div>
+                                    <div className="p-10 flex flex-col h-full">
+                                        <div className="mb-8 text-center">
+                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Bono Solidario</p>
                                             <h3 className="text-5xl font-black text-gray-800 tracking-tighter">{bond.price}</h3>
                                         </div>
-                                        <div className="flex-grow">
-                                            <ul className="space-y-4 mb-8">
-                                                {["Deducible de renta", "Certificado de donación", "Ayuda directa"].map((item, i) => (
-                                                    <li key={i} className="flex items-center text-gray-600">
-                                                        <div className="mr-3 p-1 rounded-full bg-green-100 text-green-600">
-                                                            <Icons.CheckCircle size={14} strokeWidth={3} />
-                                                        </div>
-                                                        <span className="font-medium">{item}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                        
+                                        <div className="flex-grow space-y-4 mb-8">
+                                            {["Deducible de renta", "Certificado de donación", "Ayuda directa"].map((item, i) => (
+                                                <div key={i} className="flex items-center text-gray-600 bg-gray-50 p-3 rounded-xl">
+                                                    <div className="mr-3 text-green-500">
+                                                        <Icons.CheckCircle size={20} strokeWidth={3} />
+                                                    </div>
+                                                    <span className="font-medium">{item}</span>
+                                                </div>
+                                            ))}
                                         </div>
+
                                         <button 
                                             onClick={() => setActiveTab('contacto')}
-                                            className="w-full block text-center py-4 rounded-xl bg-[#003366] text-white font-bold text-lg shadow-lg hover:bg-[#004080] transition-colors group-hover:shadow-[#003366]/25"
+                                            className="w-full block text-center py-4 rounded-xl bg-[#003366] text-white font-bold text-lg shadow-lg hover:bg-[#004080] transition-all transform hover:-translate-y-1 active:scale-95"
                                         >
-                                            Solicitar ahora
+                                            Solicitar Ahora
                                         </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="max-w-4xl mx-auto bg-gradient-to-br from-[#003366] to-[#005b96] rounded-3xl p-1 shadow-2xl">
-                            <div className="bg-white rounded-[22px] p-8 md:p-12">
-                                <div className="flex flex-col md:flex-row items-center gap-8">
-                                    <div className="bg-blue-50 p-6 rounded-2xl">
-                                        <Icons.Home size={48} className="text-[#003366]" />
-                                    </div>
-                                    <div className="flex-grow text-center md:text-left">
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Transferencia Bancaria</h3>
-                                        <p className="text-gray-500 mb-4">Banco Nacional de Costa Rica</p>
-                                        <div className="bg-gray-100 p-4 rounded-xl inline-block w-full">
-                                            <p className="font-mono text-xl md:text-3xl font-bold text-[#003366] tracking-tight truncate">{BANK_ACCOUNT}</p>
+
+                        {/* Sección Bancaria Destacada */}
+                        <div className="max-w-4xl mx-auto transform hover:scale-[1.01] transition-transform duration-300 fade-in-up delay-300">
+                            <div className="relative rounded-[2.5rem] p-1 bg-gradient-to-r from-[#003366] to-blue-500 shadow-2xl">
+                                <div className="bg-white rounded-[2.4rem] p-8 md:p-12 relative overflow-hidden">
+                                    <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                                        <div className="bg-blue-50 p-6 rounded-3xl shadow-inner flex-shrink-0">
+                                            <Icons.Home size={56} className="text-[#003366]" />
+                                        </div>
+                                        <div className="flex-grow text-center md:text-left space-y-2">
+                                            <h3 className="text-2xl font-bold text-gray-900">Transferencia Bancaria</h3>
+                                            <p className="text-gray-500 font-medium">Banco Nacional de Costa Rica</p>
+                                            <div 
+                                                onClick={copyToClipboard}
+                                                className="mt-4 bg-gray-100 p-4 rounded-2xl cursor-pointer hover:bg-blue-50 transition-colors group relative"
+                                            >
+                                                <p className="font-mono text-xl sm:text-3xl font-bold text-[#003366] tracking-tight truncate text-center md:text-left select-all">
+                                                    {BANK_ACCOUNT}
+                                                </p>
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                                                    <span className="text-xs font-bold uppercase tracking-widest text-gray-600">Clic para copiar</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-shrink-0 w-full md:w-auto">
+                                            <button 
+                                                onClick={copyToClipboard}
+                                                className={`w-full md:w-auto flex justify-center items-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all transform active:scale-95 ${
+                                                    showCopied 
+                                                    ? 'bg-green-500 text-white shadow-lg scale-105' 
+                                                    : 'bg-[#003366] text-white hover:bg-[#004080] shadow-xl hover:-translate-y-1'
+                                                }`}
+                                            >
+                                                {showCopied ? <Icons.CheckCircle size={24}/> : <Icons.Copy size={24}/>}
+                                                {showCopied ? "¡Copiado!" : "Copiar"}
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="flex-shrink-0">
-                                        <button onClick={copyToClipboard} className={`flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-lg transition-all ${showCopied ? 'bg-green-500 text-white shadow-green-500/30 shadow-lg' : 'bg-[#003366] text-white hover:bg-[#004080] shadow-blue-900/30 shadow-lg'}`}>
-                                            {showCopied ? <Icons.CheckCircle size={24}/> : <Icons.Copy size={24}/>}
-                                            {showCopied ? "¡Listo!" : "Copiar"}
-                                        </button>
-                                    </div>
+                                    <p className="mt-8 text-center text-sm text-gray-400 font-medium border-t border-gray-100 pt-6">
+                                        * Por favor envía tu comprobante al WhatsApp para generar tu certificado digital.
+                                    </p>
                                 </div>
-                                <p className="mt-6 text-center text-sm text-gray-400">* Por favor envía tu comprobante al WhatsApp para generar tu certificado digital deducible de impuestos.</p>
                             </div>
                         </div>
                     </div>
@@ -278,38 +375,66 @@
         };
 
         const Footer = () => (
-            <footer className="bg-[#002a55] text-white pt-20 pb-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-                        <div>
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="bg-white/10 p-2 rounded-lg"><Icons.Heart className="text-blue-300" size={24}/></div>
-                                <h4 className="text-xl font-bold">Nuestra Misión</h4>
+            <footer className="bg-[#002a55] text-white pt-24 pb-12 rounded-t-[3rem] mt-10">
+                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-20">
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.Heart className="text-blue-300" size={28}/></div>
+                                <h4 className="text-2xl font-bold tracking-tight">Nuestra Misión</h4>
                             </div>
-                            <p className="text-blue-200/80 leading-relaxed">Somos una organización sin fines de lucro, dedicada al bienestar integral de los adultos mayores de Hatillo y San Sebastián.</p>
+                            <p className="text-blue-200/80 leading-relaxed text-lg">
+                                Somos una organización sin fines de lucro, dedicada con amor al bienestar integral de los adultos mayores de Hatillo y San Sebastián.
+                            </p>
                         </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="bg-white/10 p-2 rounded-lg"><Icons.Phone className="text-blue-300" size={24}/></div>
-                                <h4 className="text-xl font-bold">Contacto</h4>
+                        
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.Phone className="text-blue-300" size={28}/></div>
+                                <h4 className="text-2xl font-bold tracking-tight">Contacto</h4>
                             </div>
-                            <a href={`tel:${PHONE.replace(/-/g, '')}`} className="text-blue-200/80 mb-2 font-mono text-lg block hover:text-white transition-colors">{PHONE}</a>
-                            {EMAILS.map((email, i) => (
-                                <a key={i} href={`mailto:${email}`} className="text-blue-200/80 mb-1 text-sm block hover:text-white transition-colors">{email}</a>
-                            ))}
-                            <a href={FACEBOOK_LINK} target="_blank" className="inline-flex items-center text-white font-semibold hover:text-blue-300 transition-colors border-b border-transparent hover:border-blue-300 pb-1 mt-4"><Icons.Facebook className="mr-2 text-blue-300" size={20} /> Visítanos en Facebook</a>
+                            <div className="space-y-3">
+                                {PHONES.map((phone, i) => (
+                                    <a key={i} href={`tel:506${phone.replace(/-/g, '')}`} className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 group-hover:bg-white transition-colors"></span>
+                                        <span className="text-xl font-mono">{phone}</span>
+                                    </a>
+                                ))}
+                            </div>
+                            <div className="pt-4 border-t border-white/10 space-y-2">
+                                {EMAILS.map((email, i) => (
+                                    <a key={i} href={`mailto:${email}`} className="block text-sm text-blue-200 hover:text-white transition-colors truncate">
+                                        {email}
+                                    </a>
+                                ))}
+                            </div>
+                            <a href={FACEBOOK_LINK} target="_blank" className="inline-flex items-center gap-2 text-white font-bold hover:text-blue-300 transition-colors mt-2">
+                                <Icons.Facebook className="text-blue-400" size={24} /> 
+                                <span>Síguenos en Facebook</span>
+                            </a>
                         </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-6">
-                                <div className="bg-white/10 p-2 rounded-lg"><Icons.MapPin className="text-blue-300" size={24}/></div>
-                                <h4 className="text-xl font-bold">Visítanos</h4>
+
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.MapPin className="text-blue-300" size={28}/></div>
+                                <h4 className="text-2xl font-bold tracking-tight">Visítanos</h4>
                             </div>
-                            <p className="text-blue-200/80">{ADDRESS}</p>
-                            <p className="text-blue-200/80 mt-2">Hatillo, San José, Costa Rica.<br/>Abierto de Lunes a Viernes.</p>
+                            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                <p className="text-white text-lg font-medium mb-2">{ADDRESS}</p>
+                                <p className="text-blue-300">Hatillo, San José, Costa Rica.</p>
+                                <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2 text-sm text-blue-200">
+                                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                                    Abierto de Lunes a Viernes
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="border-t border-white/10 pt-8 text-center">
-                        <p className="text-blue-400 text-sm">© 2025 Centro Diurno Hatillo-San Sebastián. <br className="sm:hidden"/> Todos los derechos reservados.</p>
+                    
+                    <div className="border-t border-white/10 pt-10 text-center">
+                        <p className="text-blue-300/60 text-sm">
+                            &copy; 2025 Centro Diurno Hatillo-San Sebastián. <br className="sm:hidden"/> 
+                            Todos los derechos reservados.
+                        </p>
                     </div>
                 </div>
             </footer>
@@ -333,9 +458,10 @@
             };
 
             return (
-                <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+                <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white selection:bg-blue-100">
                     <Navigation activeTab={activeTab} setActiveTab={setActiveTab} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
-                    <div className="flex-grow">
+                    
+                    <div className="flex-grow pt-20">
                         {activeTab === 'inicio' && (
                             <>
                                 <Hero setActiveTab={setActiveTab} />
@@ -344,43 +470,85 @@
                             </>
                         )}
                         {activeTab === 'proyectos' && (
-                            <div className="animate-fade-in-up">
-                                <div className="bg-[#003366] py-20 text-center text-white">
-                                    <h1 className="text-4xl font-bold">Nuestros Proyectos</h1>
-                                    <p className="text-blue-200 mt-4">Transparencia en cada acción</p>
+                            <div className="fade-in-up">
+                                <div className="bg-[#003366] pt-32 pb-24 text-center text-white relative overflow-hidden rounded-b-[3rem] mb-10">
+                                    <div className="relative z-10 px-6">
+                                        <h1 className="text-4xl md:text-6xl font-black mb-4">Nuestros Proyectos</h1>
+                                        <p className="text-blue-200 text-xl max-w-2xl mx-auto">Cada donación es un paso hacia un mejor futuro para nuestros adultos mayores.</p>
+                                    </div>
+                                    {/* Decoración */}
+                                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-[#002a55] opacity-50"></div>
                                 </div>
                                 <ProjectsSection />
                             </div>
                         )}
                         {activeTab === 'donar' && (
-                            <div className="animate-fade-in-up">
-                                <div className="bg-[#003366] py-20 text-center text-white">
-                                    <h1 className="text-4xl font-bold">Haz tu Donación</h1>
-                                    <p className="text-blue-200 mt-4">Tu aporte hace la diferencia</p>
+                            <div className="fade-in-up">
+                                <div className="bg-[#003366] pt-32 pb-24 text-center text-white relative overflow-hidden rounded-b-[3rem] mb-10">
+                                    <div className="relative z-10 px-6">
+                                        <h1 className="text-4xl md:text-6xl font-black mb-4">Haz tu Donación</h1>
+                                        <p className="text-blue-200 text-xl max-w-2xl mx-auto">Tu generosidad se convierte en bienestar, salud y alegría.</p>
+                                    </div>
                                 </div>
                                 <DonationSection showCopied={showCopied} copyToClipboard={copyToClipboard} setActiveTab={setActiveTab} />
                             </div>
                         )}
                         {activeTab === 'contacto' && (
-                            <div className="py-20 text-center animate-fade-in-up min-h-[60vh] flex flex-col justify-center items-center bg-gray-50">
-                                <h2 className="text-4xl font-black text-[#003366] mb-8">Contáctanos</h2>
-                                <p className="text-xl text-gray-600 mb-12 max-w-2xl">Estamos aquí para responder tus dudas y guiarte en tu proceso de colaboración.</p>
-                                <div className="bg-white p-12 rounded-3xl shadow-xl border border-gray-100 max-w-lg w-full">
-                                    <div className="mb-8">
-                                        <p className="text-sm text-gray-400 uppercase font-bold tracking-widest mb-2">Dirección</p>
-                                        <p className="text-xl font-bold text-gray-800">{ADDRESS}</p>
-                                    </div>
-                                    
-                                    <div className="mb-8">
-                                        <p className="text-sm text-gray-400 uppercase font-bold tracking-widest mb-2">Llámanos</p>
-                                        <a href={`tel:${PHONE.replace(/-/g, '')}`} className="text-4xl font-black text-gray-800 hover:text-blue-600 transition-colors">{PHONE}</a>
+                            <div className="min-h-[80vh] flex flex-col justify-center items-center bg-gray-50 py-12 px-4 sm:px-6">
+                                <div className="max-w-4xl w-full fade-in-up">
+                                    <div className="text-center mb-12">
+                                        <h2 className="text-4xl md:text-5xl font-black text-[#003366] mb-4">Contáctanos</h2>
+                                        <p className="text-xl text-gray-600">Estamos aquí para escucharte y responder tus dudas.</p>
                                     </div>
 
-                                    <div className="mb-8">
-                                        <p className="text-sm text-gray-400 uppercase font-bold tracking-widest mb-2">Escríbenos</p>
-                                        {EMAILS.map((email, i) => (
-                                            <a key={i} href={`mailto:${email}`} className="text-lg font-medium text-blue-600 hover:underline block mb-1">{email}</a>
-                                        ))}
+                                    <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
+                                        <div className="grid md:grid-cols-2">
+                                            <div className="p-10 md:p-14 space-y-10">
+                                                <div>
+                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Ubicación</p>
+                                                    <p className="text-2xl font-bold text-gray-800 leading-snug">{ADDRESS}</p>
+                                                </div>
+                                                
+                                                <div>
+                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Teléfonos</p>
+                                                    <div className="space-y-2">
+                                                        {PHONES.map((phone, i) => (
+                                                            <a key={i} href={`tel:506${phone.replace(/-/g, '')}`} className="block text-3xl font-black text-[#003366] hover:text-blue-500 transition-colors">
+                                                                {phone}
+                                                            </a>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Correo Electrónico</p>
+                                                    <div className="space-y-1">
+                                                        {EMAILS.map((email, i) => (
+                                                            <a key={i} href={`mailto:${email}`} className="block text-lg font-medium text-blue-600 hover:underline truncate">
+                                                                {email}
+                                                            </a>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-[#003366] p-10 md:p-14 text-white flex flex-col justify-center relative overflow-hidden">
+                                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                                                <div className="relative z-10">
+                                                    <h3 className="text-2xl font-bold mb-6">¿Tienes WhatsApp?</h3>
+                                                    <p className="text-blue-100 mb-8 leading-relaxed">
+                                                        Escríbenos directamente para consultas rápidas sobre cómo donar o ser voluntario.
+                                                    </p>
+                                                    <a 
+                                                        href={WHATSAPP_LINK} 
+                                                        className="inline-flex w-full justify-center items-center gap-3 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95"
+                                                    >
+                                                        <Icons.MessageCircle size={28}/>
+                                                        Chatear Ahora
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
