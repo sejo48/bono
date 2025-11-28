@@ -1,347 +1,265 @@
 <!DOCTYPE html>
-<html lang="es" translate="no">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="google" content="notranslate">
+    <title>MAGIS Tube Ultimate - Jorge</title>
     
-    <!-- ETIQUETAS PARA WHATSAPP Y REDES SOCIALES (Open Graph) -->
-    <meta property="og:title" content="Centro Diurno Hatillo-San Sebastián: ¡Regala apoyo, recibí esperanza!">
-    <meta property="og:description" content="Apoya a nuestros adultos mayores adquiriendo Bonos de Solidaridad deducibles de renta. Tu ayuda transforma vidas.">
-    <meta property="og:image" content="https://centrohatillosansebastiancr.netlify.app/static/media/Logo.538549bdc6f39bf49a25.png">
-    <meta property="og:url" content="https://centrodiurnohatillo.com">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="es_CR">
-    
-    <title>Centro Diurno de Ancianos Hatillo-San Sebastián</title>
-    
-    <!-- Tailwind CSS -->
+    <!-- Librerías Externas (CDNs) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React y ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        /* Estilos Base */
+        body { background-color: #111827; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
-        }
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animaciones */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         
-        .animate-fade-in-up { 
-            animation: fadeInUp 0.8s ease-out forwards; 
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Animación de Nieve */
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        .glass-dark {
-            background: rgba(0, 51, 102, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-up { animation: slideUp 0.8s ease-out; }
+        .animate-shake { animation: shake 0.2s ease-in-out 0s 2; }
+        .heart-pop { animation: heartPop 0.3s ease-in-out; }
+        
+        .text-gold-gradient {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        html { scroll-behavior: smooth; }
-        button, a { touch-action: manipulation; }
+        /* Utilidad para móviles (Safe Area) */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        
+        /* Estilo para iframe responsive (Google Drive) */
+        .iframe-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: black; }
+        .iframe-container iframe { width: 100%; height: 100%; border: 0; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 notranslate">
+<body>
     <div id="root"></div>
 
-    <script type="text/babel" class="notranslate" data-no-optimize="1">
-        const { useState, useEffect } = React;
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- DATOS CONSTANTES ---
-        const PHONES = ["2254-3795", "6193-5408"]; 
-        const ADDRESS = "Av. 46, San José, Kennedy";
-        const EMAILS = ["centrodhss@hotmail.com", "centrodhatillosansebastian@gmail.com"];
-        const BANK_ACCOUNT = "100-01-000-125775-7";
-        const FACEBOOK_LINK = "https://www.facebook.com/centrodhss";
-        const LOGO_URL = "https://centrohatillosansebastiancr.netlify.app/static/media/Logo.538549bdc6f39bf49a25.png";
-        const HEADER_IMAGE = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvzMB1Y6IdpS5xD0gYOS5NkWFgm6a4CXLV3aklRjdDyav-ysweRgCT0zmyadXWvgxyPFaiixRHMj49QLo_bxDotwup7xZ_5NmkE514IgYeRH2bXW4WaiYnB3wlOUHclkVvyQNfWg2axW5PfMUTWPx-vgeedayQOhWKFy2vv6WAnBDm7OAZP7yrLnoA9Os/s1600/a302bd11-7ef0-4865-8eb2-5d4fade97cd7.jpg";
-        const WHATSAPP_LINK = `https://wa.me/50661935408?text=Hola,%20me%20gustaría%20información%20sobre%20los%20bonos%20solidarios.`;
-
-        // --- ICONOS ---
-        const Icons = {
-            Heart: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>,
-            Phone: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-            Info: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>,
-            Mail: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
-            MapPin: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
-            MessageCircle: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
-            Copy: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>,
-            CheckCircle: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
-            Home: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-            Menu: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
-            X: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            Hammer: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15 22 10.64"/><path d="m20.91 11.7-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V2.46V2a2 2 0 0 0-2-2h-3c-1.1 0-2 .9-2 2v3.74c0 1.05-.6 2.05-1.5 2.6L4.16 12.1"/></svg>,
-            Paintbrush: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/><path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/><path d="M14.5 17.5 4.5 15"/></svg>,
-            Stethoscope: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>,
-            Users: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-            Zap: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>,
-            Armchair: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2"/><path d="M19 18v2"/></svg>,
-            Facebook: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        // --- CONFIGURACIÓN DE URLS ---
+        const URLS = {
+            TV: 'https://raw.githubusercontent.com/sejo48/retrom3u/refs/heads/main/listaoficial.m3u',
+            SERIES: 'https://raw.githubusercontent.com/sejo48/jorgedrive/refs/heads/main/playlist.json',
+            MOVIES: 'https://raw.githubusercontent.com/sejo48/peliculas/refs/heads/main/peliculas.json'
         };
 
-        // --- COMPONENTES INDEPENDIENTES ---
+        // --- COMPONENTE DE ICONOS ---
+        const Icon = ({ name, size = 24, className, fill = "none" }) => {
+            const icons = {
+                search: <path d="M21 21l-4.35-4.35m0 0a7.5 7.5 0 111.414-1.414 7.5 7.5 0 01-1.414 1.414z" />,
+                menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+                x: <path d="M6 18L18 6M6 6l12 12" />,
+                tv: <path d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" />,
+                film: <path d="M19.82 2H4.18C2.97 2 2 2.97 2 4.18v15.64C2 21.03 2.97 22 4.18 22h15.64c1.21 0 2.18-.97 2.18-2.18V4.18C22 2.97 21.03 2 19.82 2zM7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 7h5M17 17h5" />,
+                play: <path d="M5 3l14 9-14 9V3z" />,
+                heart: <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />,
+                arrowLeft: <path d="M19 12H5m7 7l-7-7 7-7" />,
+                alertCircle: <><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></>,
+                chevronDown: <path d="M6 9l6 6 6-6" />,
+                chevronUp: <path d="M18 15l-6-6-6 6" />,
+                clapperboard: <><path d="M20.2 6 3 11l-.9-2.4c-.5-1.1.2-2.3 1.3-2.8l3.2-1.4c1.1-.5 2.3.2 2.8 1.3l.9 2.4l7.9-3l2 4.5Z"/><path d="M4 11v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9"/></>,
+                external: <><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></>,
+                lock: <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a7 7 0 00-14 0v2" />
+            };
+            
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill={fill} 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {icons[name] || icons.search}
+                </svg>
+            );
+        };
 
-        const Navigation = ({ activeTab, setActiveTab, mobileMenuOpen, setMobileMenuOpen }) => (
-            <nav className="fixed w-full top-0 z-50 glass-dark shadow-xl transition-all duration-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-20">
-                        {/* Logo y Nombre */}
-                        <div className="flex items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveTab('inicio'); setMobileMenuOpen(false); }}>
-                            <div className="bg-white/90 p-1.5 rounded-full shadow-lg transition-transform group-hover:scale-105">
-                                <img src={LOGO_URL} alt="Logo" className="w-10 h-10 object-contain" />
-                            </div>
-                            <span className="font-bold text-lg leading-tight hidden sm:block text-white tracking-wide drop-shadow-md">
-                                Centro Diurno<br/>Hatillo-San Sebastián
-                            </span>
-                            <span className="font-bold text-lg sm:hidden text-white drop-shadow-md">CDHS</span>
+        // --- COMPONENTE DE NIEVE ---
+        const Snow = () => {
+            const flakes = useMemo(() => Array.from({ length: 40 }).map((_, i) => ({
+                id: i,
+                left: Math.random() * 100 + 'vw',
+                animationDuration: (Math.random() * 5 + 5) + 's',
+                animationDelay: (Math.random() * 5) + 's',
+                opacity: Math.random() * 0.5 + 0.3,
+                fontSize: (Math.random() * 10 + 10) + 'px'
+            })), []);
+
+            return (
+                <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+                    {flakes.map(flake => (
+                        <div 
+                            key={flake.id} 
+                            className="absolute top-[-20px] text-white select-none" 
+                            style={{
+                                left: flake.left,
+                                animation: `fall ${flake.animationDuration} linear infinite`,
+                                animationDelay: flake.animationDelay,
+                                opacity: flake.opacity,
+                                fontSize: flake.fontSize,
+                            }}
+                        >
+                            ❄
                         </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- PANTALLA DE BLOQUEO ---
+        const LockScreen = ({ onUnlock, correctCode, onCancel }) => {
+            const [input, setInput] = useState('');
+            const [error, setError] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (input === String(correctCode)) {
+                    onUnlock();
+                } else {
+                    setError(true);
+                    setInput('');
+                }
+            };
+
+            return (
+                <div className="absolute inset-0 z-50 bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-[#1f2937] p-8 rounded-xl max-w-xs w-full text-center border border-white/10 shadow-2xl">
+                        <div className="mb-6 flex justify-center">
+                            <div className="p-4 bg-red-500/20 rounded-full text-red-500 border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                                <Icon name="lock" size={32} />
+                            </div>
+                        </div>
+                        <h2 className="text-xl font-bold text-white mb-2">Contenido Protegido</h2>
+                        <p className="text-gray-400 text-xs mb-6">Introduce el código de acceso de 4 dígitos para ver este contenido.</p>
                         
-                        {/* Menú Desktop */}
-                        <div className="hidden md:block">
-                            <div className="ml-10 flex items-baseline space-x-2">
-                                {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
-                                    <button
-                                        key={item}
-                                        onClick={() => setActiveTab(item.toLowerCase())}
-                                        className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 ${
-                                            activeTab === item.toLowerCase() 
-                                            ? 'bg-white text-[#003366] shadow-lg scale-105' 
-                                            : 'text-blue-100 hover:bg-white/10 hover:text-white'
-                                        }`}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
+                        <form onSubmit={handleSubmit}>
+                            <input 
+                                type="password" 
+                                maxLength="4"
+                                className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 text-center text-2xl tracking-[0.5em] text-white focus:border-[#E50914] outline-none mb-4 transition-colors placeholder-gray-600"
+                                value={input}
+                                onChange={(e) => { setInput(e.target.value); setError(false); }}
+                                placeholder="••••"
+                                autoFocus
+                            />
+                            {error && <p className="text-red-500 text-xs mb-4 font-bold animate-shake">Código incorrecto</p>}
+                            
+                            <div className="flex gap-3">
+                                <button type="button" onClick={onCancel} className="flex-1 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 transition-colors text-sm">
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="flex-1 py-2 rounded-lg bg-[#E50914] text-white font-bold hover:bg-red-700 transition-colors text-sm shadow-lg shadow-red-900/20">
+                                    Acceder
+                                </button>
                             </div>
-                        </div>
-
-                        {/* Botón Menú Móvil */}
-                        <div className="md:hidden">
-                            <button 
-                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-                                className="p-2.5 rounded-xl text-white hover:bg-white/10 transition-colors"
-                                aria-label="Menú principal"
-                            >
-                                {mobileMenuOpen ? <Icons.X size={28} /> : <Icons.Menu size={28} />}
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
-                
-                {/* Menú Móvil Desplegable */}
-                <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="bg-[#002a55] border-t border-blue-800/50 shadow-inner px-4 py-4 space-y-2">
-                        {['Inicio', 'Proyectos', 'Donar', 'Contacto'].map((item) => (
-                            <button
-                                key={item}
-                                onClick={() => {
-                                    setActiveTab(item.toLowerCase());
-                                    setMobileMenuOpen(false);
-                                }}
-                                className={`block w-full text-left px-4 py-3.5 rounded-xl font-medium transition-colors ${
-                                    activeTab === item.toLowerCase() 
-                                    ? 'bg-white/10 text-white border-l-4 border-white pl-3' 
-                                    : 'text-blue-200 hover:bg-white/5 hover:text-white'
-                                }`}
-                            >
-                                {item}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </nav>
-        );
+            );
+        };
 
-        const Hero = ({ setActiveTab }) => (
-            <div className="relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-20">
-                {/* Fondo con imagen y overlay */}
-                <div className="absolute inset-0 z-0">
-                    <div 
-                        className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-[20s] hover:scale-110"
-                        style={{ backgroundImage: `url('${HEADER_IMAGE}')` }}
-                    ></div>
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/95 via-[#003366]/80 to-transparent"></div>
+        // --- PANTALLA INTRO ---
+        const IntroScreen = ({ onEnter }) => (
+            <div className="fixed inset-0 z-[100] bg-[#111827] flex items-center justify-center overflow-hidden font-sans">
+                <Snow />
+                <div className="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=2069&auto=format&fit=crop" className="w-full h-full object-cover opacity-10 animate-pulse" alt="Background"/>
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#111827] via-[#111827]/90 to-[#111827]"></div>
                 </div>
-
-                <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center text-white w-full">
-                    <div className="fade-in-up">
-                        <span className="inline-block py-1.5 px-4 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-100 text-xs sm:text-sm font-bold tracking-widest mb-6 backdrop-blur-sm uppercase">
-                            Organización sin fines de lucro
-                        </span>
-                        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tight mb-6 leading-tight drop-shadow-2xl">
-                            Regala apoyo,<br/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200">recibí esperanza</span>
-                        </h1>
-                        <p className="mt-6 text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed drop-shadow-md">
-                            Dedicada al bienestar integral de los adultos mayores.<br className="hidden md:block"/>
-                            Tu ayuda hace realidad nuestros proyectos.
-                        </p>
-                        <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <button 
-                                onClick={() => setActiveTab('donar')} 
-                                className="w-full sm:w-auto px-10 py-4 bg-white text-[#003366] font-bold rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:bg-gray-50 transition-all transform hover:-translate-y-1 active:scale-95 text-lg"
-                            >
-                                Quiero Apoyar
-                            </button>
-                            <button 
-                                onClick={() => setActiveTab('proyectos')} 
-                                className="w-full sm:w-auto px-10 py-4 bg-transparent border-2 border-white/80 text-white font-bold rounded-full hover:bg-white/10 transition-all text-lg backdrop-blur-sm active:scale-95"
-                            >
-                                Ver Proyectos
-                            </button>
-                        </div>
+                <div className="relative z-10 text-center p-6 max-w-3xl animate-slide-up">
+                    <div className="mb-4 inline-block bg-[#E50914] px-3 py-1 rounded text-xs font-bold tracking-widest uppercase text-white shadow-[0_0_15px_rgba(229,9,20,0.5)]">Premium Access</div>
+                    <h1 className="text-6xl md:text-8xl font-black text-white mb-2 tracking-tighter drop-shadow-2xl">
+                        MAGIS<span className="text-[#E50914]">Tube</span>
+                    </h1>
+                    <p className="text-xl md:text-2xl text-gray-400 font-light mb-8 italic">"Donde la nostalgia se encuentra con la tecnología."</p>
+                    <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#E50914] to-transparent mx-auto mb-8 opacity-50"></div>
+                    <p className="text-sm md:text-lg text-white font-medium mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg text-center">
+                        Accede al instante a la mejor colección de series clásicas, cine de culto y televisión en vivo. Sin suscripciones, sin límites. Tu universo de entretenimiento personal.
+                    </p>
+                    <button onClick={onEnter} className="group relative bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] flex items-center gap-2 mx-auto">
+                        <span>Comenzar a Ver</span> <Icon name="play" size={20} fill="black" />
+                    </button>
+                    <div className="mt-16 opacity-80">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">DISEÑADO Y PROGRAMADO POR</p>
+                        <h3 className="text-xl font-serif text-gold-gradient font-bold mb-2">JORGE ARTURO HERNÁNDEZ MÉNDEZ</h3>
+                        <p className="text-[10px] text-gray-600">Potenciado por la inteligencia de <span className="text-blue-400">Gemini AI</span></p>
                     </div>
                 </div>
             </div>
         );
 
-        const ProjectsSection = () => {
-            const projects = [
-                { icon: Icons.Hammer, title: "Estructura", desc: "Cambio de techos, canoas y cielo rasos." },
-                { icon: Icons.Paintbrush, title: "Embellecimiento", desc: "Pintura total de las instalaciones." },
-                { icon: Icons.Home, title: "Infraestructura", desc: "Reparación de pisos y mantenimiento general." },
-                { icon: Icons.Zap, title: "Electricidad", desc: "Cambio total de instalaciones eléctricas." },
-                { icon: Icons.Armchair, title: "Mobiliario", desc: "Compra de nuevo mobiliario para el centro." },
-                { icon: Icons.Stethoscope, title: "Salud", desc: "Compra de equipos de fisioterapia." },
-            ];
+        // --- HERO SECTION ---
+        const HeroSection = ({ item, onPlay, isFavorite, onToggleFavorite }) => {
+            if (!item) return null;
             return (
-                <div className="py-24 bg-gray-50">
-                    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                        <div className="text-center max-w-3xl mx-auto mb-20 fade-in-up">
-                            <h2 className="text-blue-600 font-bold tracking-widest uppercase text-sm mb-3">Transparencia y Acción</h2>
-                            <p className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 tracking-tight">Nuestros Objetivos</p>
-                            <p className="text-gray-600 text-xl">Tu ayuda se invierte directamente en estas mejoras tangibles:</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {projects.map((project, index) => (
-                                <div 
-                                    key={index} 
-                                    className="bg-white rounded-[2rem] p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group fade-in-up"
-                                    style={{ animationDelay: `${index * 100}ms` }}
-                                >
-                                    <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 text-[#003366] mb-6 group-hover:bg-[#003366] group-hover:text-white transition-colors duration-300 shadow-sm">
-                                        <project.icon size={32} />
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#003366] transition-colors">{project.title}</h3>
-                                    <p className="text-gray-500 leading-relaxed text-lg">{project.desc}</p>
-                                </div>
-                            ))}
-                        </div>
+                <div className="relative w-full h-[50vh] md:h-[65vh] overflow-hidden mb-8 group animate-fade-in">
+                    <div className="absolute inset-0">
+                        <img 
+                            src={item.image || item.poster} 
+                            alt="Hero" 
+                            className="w-full h-full object-cover opacity-60"
+                            onError={(e) => e.target.src = 'https://placehold.co/1920x1080/111827/ffffff?text=StreamTube'}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/40 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/60 to-transparent"></div>
                     </div>
-                </div>
-            );
-        };
-
-        const DonationSection = ({ showCopied, copyToClipboard, setActiveTab }) => {
-            const bonds = [
-                { price: "₡10,000", color: "from-blue-50 to-blue-100 border-blue-200" },
-                { price: "₡25,000", color: "from-blue-100 to-blue-200 border-blue-300" },
-                { price: "₡50,000", color: "from-blue-200 to-blue-300 border-blue-400" },
-            ];
-            return (
-                <div className="relative py-24 bg-white overflow-hidden">
-                    {/* Decoración de fondo */}
-                    <div className="absolute top-0 right-0 -mr-40 -mt-40 w-[600px] h-[600px] bg-blue-50 rounded-full opacity-60 blur-3xl pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-[500px] h-[500px] bg-blue-100 rounded-full opacity-60 blur-3xl pointer-events-none"></div>
-
-                    <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-                        <div className="text-center mb-20 fade-in-up">
-                            <span className="inline-block py-1.5 px-4 rounded-full bg-green-100 text-green-700 text-sm font-bold mb-4 tracking-wide">100% DEDUCIBLE DE RENTA</span>
-                            <h2 className="text-4xl sm:text-5xl font-black text-[#003366] mb-6 tracking-tight">Tu Aporte Transforma</h2>
-                            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                                Puedes adquirir un bono, ser padrino/madrina o apoyarnos con una cuota mensual voluntaria.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-                            {bonds.map((bond, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className={`relative rounded-[2rem] overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl bg-white border border-gray-100 shadow-xl group fade-in-up`}
-                                    style={{ animationDelay: `${idx * 150}ms` }}
-                                >
-                                    <div className={`absolute top-0 left-0 w-full h-3 bg-gradient-to-r ${bond.color.split(' ')[0]} ${bond.color.split(' ')[1]}`}></div>
-                                    <div className="p-10 flex flex-col h-full">
-                                        <div className="mb-8 text-center">
-                                            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Bono Solidario</p>
-                                            <h3 className="text-5xl font-black text-gray-800 tracking-tighter">{bond.price}</h3>
-                                        </div>
-                                        
-                                        <div className="flex-grow space-y-4 mb-8">
-                                            {["Deducible de renta", "Certificado de donación", "Ayuda directa"].map((item, i) => (
-                                                <div key={i} className="flex items-center text-gray-600 bg-gray-50 p-3 rounded-xl">
-                                                    <div className="mr-3 text-green-500">
-                                                        <Icons.CheckCircle size={20} strokeWidth={3} />
-                                                    </div>
-                                                    <span className="font-medium">{item}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <button 
-                                            onClick={() => setActiveTab('contacto')}
-                                            className="w-full block text-center py-4 rounded-xl bg-[#003366] text-white font-bold text-lg shadow-lg hover:bg-[#004080] transition-all transform hover:-translate-y-1 active:scale-95"
-                                        >
-                                            Solicitar Ahora
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Sección Bancaria Destacada */}
-                        <div className="max-w-4xl mx-auto transform hover:scale-[1.01] transition-transform duration-300 fade-in-up delay-300">
-                            <div className="relative rounded-[2.5rem] p-1 bg-gradient-to-r from-[#003366] to-blue-500 shadow-2xl">
-                                <div className="bg-white rounded-[2.4rem] p-8 md:p-12 relative overflow-hidden">
-                                    <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                                        <div className="bg-blue-50 p-6 rounded-3xl shadow-inner flex-shrink-0">
-                                            <Icons.Home size={56} className="text-[#003366]" />
-                                        </div>
-                                        <div className="flex-grow text-center md:text-left space-y-2">
-                                            <h3 className="text-2xl font-bold text-gray-900">Transferencia Bancaria</h3>
-                                            <p className="text-gray-500 font-medium">Banco Nacional de Costa Rica</p>
-                                            <div 
-                                                onClick={copyToClipboard}
-                                                className="mt-4 bg-gray-100 p-4 rounded-2xl cursor-pointer hover:bg-blue-50 transition-colors group relative"
-                                            >
-                                                <p className="font-mono text-xl sm:text-3xl font-bold text-[#003366] tracking-tight truncate text-center md:text-left select-all">
-                                                    {BANK_ACCOUNT}
-                                                </p>
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
-                                                    <span className="text-xs font-bold uppercase tracking-widest text-gray-600">Clic para copiar</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex-shrink-0 w-full md:w-auto">
-                                            <button 
-                                                onClick={copyToClipboard}
-                                                className={`w-full md:w-auto flex justify-center items-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all transform active:scale-95 ${
-                                                    showCopied 
-                                                    ? 'bg-green-500 text-white shadow-lg scale-105' 
-                                                    : 'bg-[#003366] text-white hover:bg-[#004080] shadow-xl hover:-translate-y-1'
-                                                }`}
-                                            >
-                                                {showCopied ? <Icons.CheckCircle size={24}/> : <Icons.Copy size={24}/>}
-                                                {showCopied ? "¡Copiado!" : "Copiar"}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <p className="mt-8 text-center text-sm text-gray-400 font-medium border-t border-gray-100 pt-6">
-                                        * Por favor envía tu comprobante al WhatsApp para generar tu certificado digital.
-                                    </p>
+                    <div className="absolute inset-0 flex items-center p-6 md:p-12 max-w-7xl mx-auto">
+                        <div className="flex flex-col md:flex-row gap-8 items-center md:items-end w-full">
+                            <div className="hidden md:block w-48 lg:w-64 flex-shrink-0 rounded-lg shadow-2xl overflow-hidden border border-white/10 transform -rotate-2 hover:rotate-0 transition-all duration-500">
+                                <img src={item.image || item.poster} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex flex-col gap-4 items-start flex-1">
+                                <span className="bg-[#E50914] text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">
+                                    {item.type === 'tv' ? 'En Vivo' : item.type === 'series' ? 'Serie Destacada' : 'Película'}
+                                </span>
+                                <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-xl line-clamp-2">
+                                    {item.title || item.name}
+                                </h1>
+                                <p className="text-gray-300 text-sm md:text-base max-w-xl line-clamp-3">
+                                    {item.description || item.plot || "Disfruta del mejor contenido seleccionado especialmente para ti. Disponible ahora en alta definición."}
+                                </p>
+                                <div className="flex gap-4 mt-4">
+                                    <button onClick={() => onPlay(item)} className="bg-white text-black px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-gray-200 transition-transform hover:scale-105">
+                                        <Icon name="play" size={20} fill="black"/> Reproducir
+                                    </button>
+                                    <button onClick={() => onToggleFavorite(item)} className="bg-white/10 text-white px-4 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-white/20 backdrop-blur-sm border border-white/10">
+                                        <Icon name="heart" size={20} className={isFavorite ? "text-[#E50914] fill-[#E50914] heart-pop" : "text-white"} fill={isFavorite ? "#E50914" : "none"} />
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -350,192 +268,612 @@
             );
         };
 
-        const Footer = () => (
-            <footer className="bg-[#002a55] text-white pt-24 pb-12 rounded-t-[3rem] mt-10">
-                <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-20">
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.Heart className="text-blue-300" size={28}/></div>
-                                <h4 className="text-2xl font-bold tracking-tight">Nuestra Misión</h4>
-                            </div>
-                            <p className="text-blue-200/80 leading-relaxed text-lg">
-                                Somos una organización sin fines de lucro, dedicada con amor al bienestar integral de los adultos mayores de Hatillo y San Sebastián.
-                            </p>
-                        </div>
-                        
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.Phone className="text-blue-300" size={28}/></div>
-                                <h4 className="text-2xl font-bold tracking-tight">Contacto</h4>
-                            </div>
-                            <div className="space-y-3">
-                                {PHONES.map((phone, i) => (
-                                    <a key={i} href={`tel:506${phone.replace(/-/g, '')}`} className="flex items-center gap-3 text-white/90 hover:text-white transition-colors group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 group-hover:bg-white transition-colors"></span>
-                                        <span className="text-xl font-mono">{phone}</span>
-                                    </a>
-                                ))}
-                            </div>
-                            <div className="pt-4 border-t border-white/10 space-y-2">
-                                {EMAILS.map((email, i) => (
-                                    <a key={i} href={`mailto:${email}`} className="block text-sm text-blue-200 hover:text-white transition-colors truncate">
-                                        {email}
-                                    </a>
-                                ))}
-                            </div>
-                            <a href={FACEBOOK_LINK} target="_blank" className="inline-flex items-center gap-2 text-white font-bold hover:text-blue-300 transition-colors mt-2">
-                                <Icons.Facebook className="text-blue-400" size={24} /> 
-                                <span>Síguenos en Facebook</span>
-                            </a>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-white/10 p-2.5 rounded-xl"><Icons.MapPin className="text-blue-300" size={28}/></div>
-                                <h4 className="text-2xl font-bold tracking-tight">Visítanos</h4>
-                            </div>
-                            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
-                                <p className="text-white text-lg font-medium mb-2">{ADDRESS}</p>
-                                <p className="text-blue-300">Hatillo, San José, Costa Rica.</p>
-                                <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2 text-sm text-blue-200">
-                                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                                    Abierto de Lunes a Viernes
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="border-t border-white/10 pt-10 text-center">
-                        <p className="text-blue-300/60 text-sm">
-                            &copy; 2025 Centro Diurno Hatillo-San Sebastián. <br className="sm:hidden"/> 
-                            Todos los derechos reservados.
-                        </p>
-                    </div>
+        // --- ELEMENTO DE LISTA TV CON FAVORITO ---
+        const TvListItem = ({ channel, isActive, onClick, isFavorite, onToggleFavorite }) => (
+            <div 
+                onClick={() => onClick(channel)}
+                className={`group flex items-center gap-3 p-3 border-b border-white/5 cursor-pointer transition-colors ${isActive ? 'bg-[#1f2937] border-l-4 border-l-[#E50914]' : 'hover:bg-white/5'}`}
+            >
+                <div className="w-12 h-8 rounded bg-black flex items-center justify-center overflow-hidden flex-shrink-0 border border-white/10">
+                    {channel.image ? (
+                        <img src={channel.image} alt={channel.title} className="w-full h-full object-contain" onError={(e) => e.target.style.display='none'} />
+                    ) : (
+                        <Icon name="tv" size={16} className="opacity-50 text-gray-400"/>
+                    )}
                 </div>
-            </footer>
+                <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-[#E50914]' : 'text-white'}`}>{channel.title}</p>
+                    <p className="text-xs text-gray-500 truncate">{channel.group || 'General'}</p>
+                </div>
+
+                {/* Botón Favorito en Lista */}
+                <button 
+                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(channel); }}
+                    className="p-2 rounded-full hover:bg-white/10 text-gray-500 hover:text-white z-10"
+                >
+                    <Icon 
+                        name="heart"
+                        size={18} 
+                        className={isFavorite ? "text-[#E50914] fill-[#E50914] heart-pop" : ""} 
+                        fill={isFavorite ? "#E50914" : "none"}
+                    />
+                </button>
+
+                {isActive && <div className="w-2 h-2 bg-[#E50914] rounded-full animate-pulse ml-1"></div>}
+            </div>
         );
 
-        // --- COMPONENTE PRINCIPAL (APP) ---
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('inicio');
-            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            const [showCopied, setShowCopied] = useState(false);
-
-            // Efecto para hacer scroll arriba al cambiar de pestaña
-            useEffect(() => {
-                window.scrollTo(0, 0);
-            }, [activeTab]);
-
-            const copyToClipboard = () => {
-                const el = document.createElement('textarea');
-                el.value = BANK_ACCOUNT;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
-                setShowCopied(true);
-                setTimeout(() => setShowCopied(false), 2000);
-            };
+        // --- TARJETAS (CARDS) ---
+        const Card = ({ item, onClick, isFavorite, onToggleFavorite }) => {
+            const isTv = item.type === 'tv';
+            // Detectar si tiene código
+            const hasLock = item.codigo || item.password || item.pin || item.clave;
 
             return (
-                <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white selection:bg-blue-100">
-                    <Navigation activeTab={activeTab} setActiveTab={setActiveTab} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+                <div className="group relative flex flex-col gap-2 min-w-[140px] cursor-pointer" onClick={() => onClick(item)}>
+                    <div className={`relative overflow-hidden rounded-lg bg-[#1f2937] shadow-lg transition-all duration-300 group-hover:shadow-[#E50914]/20 border border-transparent group-hover:border-white/10 ${isTv ? 'aspect-video' : 'aspect-[2/3]'}`}>
+                        <img 
+                            src={item.image || item.poster || item.logo} 
+                            className={`w-full h-full ${isTv ? 'object-contain p-4' : 'object-cover'} transition-transform duration-500 group-hover:scale-110`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/300x450/1f2937/ffffff?text=${(item.title || item.name || 'X').charAt(0)}`; }}
+                            alt={item.title || item.name}
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="bg-[#E50914] p-3 rounded-full shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                                {hasLock ? <Icon name="lock" size={24} className="text-white"/> : <Icon name="play" size={24} fill="white" className="text-white ml-1" />}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={(e) => { e.stopPropagation(); onToggleFavorite(item); }}
+                            className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-full hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                            <Icon name="heart" size={16} className={isFavorite ? "text-[#E50914] fill-[#E50914]" : "text-white"} fill={isFavorite ? "#E50914" : "none"} />
+                        </button>
+                        
+                        {/* Indicadores en tarjeta */}
+                        <div className="absolute bottom-2 left-2 flex gap-1">
+                            {isTv && <span className="bg-[#E50914] text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">LIVE</span>}
+                            {hasLock && <span className="bg-yellow-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-sm"><Icon name="lock" size={8}/> PIN</span>}
+                        </div>
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">{item.title || item.name}</h3>
+                </div>
+            );
+        };
+
+        // --- APP PRINCIPAL ---
+        const App = () => {
+            const [showIntro, setShowIntro] = useState(true);
+            const [activeTab, setActiveTab] = useState('home');
+            const [content, setContent] = useState({ tv: [], series: [], movies: [] });
+            const [search, setSearch] = useState('');
+            
+            // ESTADOS DE REPRODUCCIÓN Y BLOQUEO
+            const [selectedItem, setSelectedItem] = useState(null);
+            const [selectedEpisode, setSelectedEpisode] = useState(null);
+            const [isLocked, setIsLocked] = useState(false); 
+            
+            const [favorites, setFavorites] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [expandedSeason, setExpandedSeason] = useState(0);
+
+            const videoRef = useRef(null);
+            const hlsRef = useRef(null);
+
+            // --- UTILIDAD PARA LIMPIAR URLS DE DRIVE ---
+            const cleanDriveUrl = (url) => {
+                if (!url) return '';
+                if (url.includes('drive.google.com')) {
+                    if (url.includes('/preview')) return url;
+                    const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                    return match ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
+                }
+                return url;
+            };
+
+            // CARGAR DATOS
+            useEffect(() => {
+                const fetchData = async () => {
+                    try {
+                        setLoading(true);
+                        
+                        // TV
+                        const resTV = await fetch(URLS.TV);
+                        const textTV = await resTV.text();
+                        const tvChannels = parseM3U(textTV);
+
+                        // Series
+                        const resSeries = await fetch(URLS.SERIES);
+                        const jsonSeries = await resSeries.json();
+                        const rawSeries = Array.isArray(jsonSeries) ? jsonSeries : [];
+                        
+                        const seriesList = rawSeries.map(s => ({
+                            id: s.tituloSerie, 
+                            title: s.tituloSerie || s.name || s.title,
+                            description: s.descripcion || s.description,
+                            image: s.imagen || s.image || s.poster,
+                            type: 'series',
+                            // Preservar el código de bloqueo si existe
+                            codigo: s.codigo || s.password || s.pin || s.clave,
+                            seasons: (s.temporadas || []).map(t => ({
+                                season_number: t.numeroTemporada || 1,
+                                episodes: (t.episodios || []).map(e => ({
+                                    title: e.tituloEpisodio || e.title || e.name,
+                                    url: cleanDriveUrl(e.urlDrive || e.url || e.video || e.link || e.enlace),
+                                    image: s.imagen 
+                                }))
+                            }))
+                        }));
+
+                        // Películas
+                        const resMovies = await fetch(URLS.MOVIES);
+                        const jsonMovies = await resMovies.json();
+                        const rawMovies = Array.isArray(jsonMovies) ? jsonMovies : (jsonMovies.peliculas || []);
+                        
+                        const moviesList = rawMovies.map(m => ({
+                            ...m,
+                            type: 'movie',
+                            title: m.titulo || m.title,
+                            image: m.imagen || m.poster,
+                            // Preservar el código de bloqueo si existe
+                            codigo: m.codigo || m.password || m.pin || m.clave,
+                            url: cleanDriveUrl(m.urlDrive || m.url || m.video || m.enlace || m.link)
+                        }));
+
+                        setContent({ 
+                            tv: tvChannels, 
+                            series: seriesList, 
+                            movies: moviesList
+                        });
+
+                    } catch (err) {
+                        console.error("Error cargando datos", err);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                const storedFavs = localStorage.getItem('magistube_favs');
+                if (storedFavs) setFavorites(JSON.parse(storedFavs));
+
+                fetchData();
+            }, []);
+
+            const parseM3U = (data) => {
+                const lines = data.split('\n');
+                const channels = [];
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].trim().startsWith('#EXTINF:')) {
+                        const url = lines[i + 1]?.trim();
+                        if (url && url.startsWith('http')) {
+                            const info = lines[i];
+                            const title = info.split(',')[1]?.trim() || 'Canal';
+                            const logo = info.match(/tvg-logo="([^"]*)"/)?.[1];
+                            const group = info.match(/group-title="([^"]*)"/)?.[1] || 'General';
+                            channels.push({ id: `tv-${i}`, title, image: logo, group, url, type: 'tv' });
+                        }
+                    }
+                }
+                return channels;
+            };
+
+            // --- LOGICA DE REPRODUCTOR ---
+            const getPlayUrl = () => {
+                if (selectedItem?.type === 'tv' || selectedItem?.type === 'movie') {
+                     return selectedItem.url;
+                } else if (selectedItem?.type === 'series' && selectedEpisode) {
+                     return selectedEpisode.url;
+                }
+                return '';
+            };
+
+            const playUrl = getPlayUrl();
+            const isDriveLink = playUrl && playUrl.includes('drive.google.com');
+
+            useEffect(() => {
+                // Si está bloqueado, no intentamos reproducir nada
+                if (isLocked) return;
+
+                if (isDriveLink) {
+                    if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+                    return;
+                }
+
+                if (!playUrl || !videoRef.current) return;
+
+                const video = videoRef.current;
+                if (hlsRef.current) { hlsRef.current.destroy(); hlsRef.current = null; }
+
+                if (Hls.isSupported() && (playUrl.includes('.m3u8') || selectedItem?.type === 'tv')) {
+                    const hls = new Hls();
+                    hlsRef.current = hls;
+                    hls.loadSource(playUrl);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+                } else {
+                    video.src = playUrl;
+                    video.load();
+                    video.play().catch(() => {});
+                }
+            }, [playUrl, isDriveLink, selectedItem, isLocked]);
+
+            // FUNCIONES
+            const toggleFavorite = (item) => {
+                let newFavs;
+                const itemId = item.id || item.title;
+                if (favorites.some(f => (f.id || f.title) === itemId)) {
+                    newFavs = favorites.filter(f => (f.id || f.title) !== itemId);
+                } else {
+                    newFavs = [item, ...favorites];
+                }
+                setFavorites(newFavs);
+                localStorage.setItem('magistube_favs', JSON.stringify(newFavs));
+            };
+
+            const handlePlay = (item) => {
+                // Comprobar bloqueo
+                const code = item.codigo || item.password || item.pin || item.clave;
+                
+                if (code) {
+                    setSelectedItem(item); 
+                    setIsLocked(true);
+                } else {
+                    setSelectedItem(item);
+                    setIsLocked(false);
+                }
+
+                setExpandedSeason(0); 
+                
+                if (item.type === 'series') {
+                    const seasons = item.seasons || [];
+                    const firstSeason = seasons[0];
+                    if (firstSeason) {
+                        const episodes = firstSeason.episodes || [];
+                        const firstEp = episodes[0];
+                        if (firstEp) {
+                            setSelectedEpisode({
+                                title: firstEp.title,
+                                url: firstEp.url,
+                                image: firstEp.image
+                            });
+                        } else {
+                            setSelectedEpisode(null);
+                        }
+                    }
+                }
+                
+                // Scroll logic: Only scroll to top automatically if it's NOT TV, or if it IS TV but we're on mobile
+                if (item.type !== 'tv' || window.innerWidth < 1024) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const getDisplayContent = () => {
+                let list = [];
+                if (activeTab === 'home') list = [...content.movies.slice(0,20), ...content.series.slice(0,20), ...content.tv.slice(0,20)]; 
+                else if (activeTab === 'favorites') list = favorites;
+                else list = content[activeTab] || [];
+
+                if (search) return list.filter(i => (i.title || i.name).toLowerCase().includes(search.toLowerCase()));
+                return list;
+            };
+
+            const displayedItems = getDisplayContent();
+            const heroItem = useMemo(() => {
+                if (content.movies.length > 0) return content.movies[Math.floor(Math.random() * content.movies.length)];
+                if (content.series.length > 0) return content.series[0];
+                return null;
+            }, [content]);
+
+            if (showIntro) return <IntroScreen onEnter={() => setShowIntro(false)} />;
+
+            return (
+                <div className="min-h-screen bg-[#111827] text-white font-sans flex flex-col md:flex-row relative">
                     
-                    <div className="flex-grow pt-20">
-                        {activeTab === 'inicio' && (
-                            <>
-                                <Hero setActiveTab={setActiveTab} />
-                                <ProjectsSection />
-                                <DonationSection showCopied={showCopied} copyToClipboard={copyToClipboard} setActiveTab={setActiveTab} />
-                            </>
-                        )}
-                        {activeTab === 'proyectos' && (
-                            <div className="fade-in-up">
-                                <div className="bg-[#003366] pt-32 pb-24 text-center text-white relative overflow-hidden rounded-b-[3rem] mb-10">
-                                    <div className="relative z-10 px-6">
-                                        <h1 className="text-4xl md:text-6xl font-black mb-4">Nuestros Proyectos</h1>
-                                        <p className="text-blue-200 text-xl max-w-2xl mx-auto">Cada donación es un paso hacia un mejor futuro para nuestros adultos mayores.</p>
-                                    </div>
-                                    {/* Decoración */}
-                                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-[#002a55] opacity-50"></div>
-                                </div>
-                                <ProjectsSection />
-                            </div>
-                        )}
-                        {activeTab === 'donar' && (
-                            <div className="fade-in-up">
-                                <div className="bg-[#003366] pt-32 pb-24 text-center text-white relative overflow-hidden rounded-b-[3rem] mb-10">
-                                    <div className="relative z-10 px-6">
-                                        <h1 className="text-4xl md:text-6xl font-black mb-4">Haz tu Donación</h1>
-                                        <p className="text-blue-200 text-xl max-w-2xl mx-auto">Tu generosidad se convierte en bienestar, salud y alegría.</p>
-                                    </div>
-                                </div>
-                                <DonationSection showCopied={showCopied} copyToClipboard={copyToClipboard} setActiveTab={setActiveTab} />
-                            </div>
-                        )}
-                        {activeTab === 'contacto' && (
-                            <div className="pt-24 pb-20 px-4 sm:px-6 bg-gray-50 flex justify-center items-start min-h-[80vh]">
-                                <div className="max-w-4xl w-full fade-in-up">
-                                    <div className="text-center mb-12">
-                                        <h2 className="text-4xl md:text-5xl font-black text-[#003366] mb-4">Contáctanos</h2>
-                                        <p className="text-xl text-gray-600">Estamos aquí para escucharte y responder tus dudas.</p>
-                                    </div>
+                    {/* SIDEBAR DESKTOP */}
+                    <aside className="hidden md:flex w-20 flex-col items-center py-6 bg-[#0f1115] border-r border-[#1f2937] fixed h-full z-50">
+                        <div className="mb-8 p-2 bg-[#E50914] rounded-lg shadow-lg shadow-red-900/40 cursor-pointer" onClick={() => {setActiveTab('home'); setSelectedItem(null); setIsLocked(false);}}>
+                            <Icon name="play" size={24} fill="white" className="text-white"/>
+                        </div>
+                        <div className="flex flex-col gap-6 w-full">
+                            {[
+                                { id: 'home', icon: 'search', label: 'Inicio' },
+                                { id: 'series', icon: 'film', label: 'Series' },
+                                { id: 'movies', icon: 'clapperboard', label: 'Cine' },
+                                { id: 'tv', icon: 'tv', label: 'TV' },
+                                { id: 'favorites', icon: 'heart', label: 'Favs' }
+                            ].map(tab => (
+                                <button 
+                                    key={tab.id}
+                                    onClick={() => { setActiveTab(tab.id); setSelectedItem(null); setSearch(''); setIsLocked(false); }}
+                                    className={`flex flex-col items-center gap-1 transition-colors ${activeTab === tab.id ? 'text-[#E50914]' : 'text-gray-500 hover:text-white'}`}
+                                >
+                                    <Icon name={tab.icon} size={24} fill={activeTab === tab.id && tab.id === 'favorites' ? 'currentColor' : 'none'} className={activeTab === tab.id && tab.id === 'favorites' ? 'fill-current' : ''} />
+                                    <span className="text-[10px] font-medium">{tab.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                        <div className="mt-auto mb-4 relative">
+                            <div className="absolute -top-3 -right-2 text-lg transform rotate-12 z-20 pointer-events-none">🎅</div>
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center font-serif font-bold text-black border-2 border-white/20">J</div>
+                        </div>
+                    </aside>
 
-                                    <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
-                                        <div className="grid md:grid-cols-2">
-                                            <div className="p-8 md:p-14 space-y-10">
-                                                <div>
-                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Ubicación</p>
-                                                    <p className="text-2xl font-bold text-gray-800 leading-snug">{ADDRESS}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Teléfonos</p>
-                                                    <div className="space-y-2">
-                                                        {PHONES.map((phone, i) => (
-                                                            <a key={i} href={`tel:506${phone.replace(/-/g, '')}`} className="block text-3xl font-black text-[#003366] hover:text-blue-500 transition-colors">
-                                                                {phone}
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                </div>
+                    {/* MOBILE HEADER */}
+                    <div className="md:hidden fixed top-0 w-full bg-[#111827]/95 backdrop-blur z-50 px-4 py-3 flex items-center justify-between border-b border-[#1f2937]">
+                        <div className="flex items-center gap-2 font-black text-xl tracking-tighter">
+                            <span className="text-[#E50914]">STREAM</span>TUBE
+                        </div>
+                        <button onClick={() => setActiveTab('favorites')} className="relative">
+                            <Icon name="heart" className={`${activeTab === 'favorites' ? 'text-[#E50914] fill-[#E50914]' : 'text-white'}`} fill={activeTab === 'favorites' ? '#E50914' : 'none'} />
+                        </button>
+                    </div>
 
-                                                <div className="w-full overflow-hidden">
-                                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-3">Correo Electrónico</p>
-                                                    <div className="space-y-2">
-                                                        {EMAILS.map((email, i) => (
-                                                            <a key={i} href={`mailto:${email}`} className="block text-lg md:text-xl font-medium text-blue-600 hover:underline break-words">
-                                                                {email}
-                                                            </a>
-                                                        ))}
-                                                    </div>
+                    {/* MOBILE NAV BOTTOM */}
+                    <div className="md:hidden fixed bottom-0 w-full bg-[#0f1115] border-t border-[#1f2937] z-50 flex justify-around py-3 pb-safe">
+                        {[
+                            { id: 'home', icon: 'search', label: 'Inicio' },
+                            { id: 'series', icon: 'film', label: 'Series' },
+                            { id: 'movies', icon: 'clapperboard', label: 'Cine' },
+                            { id: 'tv', icon: 'tv', label: 'TV' }
+                        ].map(tab => (
+                            <button 
+                                key={tab.id}
+                                onClick={() => { setActiveTab(tab.id); setSelectedItem(null); setIsLocked(false); }}
+                                className={`flex flex-col items-center gap-1 ${activeTab === tab.id ? 'text-[#E50914]' : 'text-gray-500'}`}
+                            >
+                                <Icon name={tab.icon} size={22} />
+                                <span className="text-[10px]">{tab.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* MAIN CONTENT AREA */}
+                    <main className="flex-1 md:ml-20 min-h-screen pt-16 md:pt-0 pb-20 md:pb-0 relative z-10">
+                        
+                        {/* LÓGICA PRINCIPAL DE VISTAS */}
+                        {(() => {
+                            // 1. VISTA DE FAVORITOS (Si estamos en tab favoritos y no hay video seleccionado)
+                            if (activeTab === 'favorites' && !selectedItem) {
+                                const favTV = favorites.filter(i => i.type === 'tv');
+                                const favOther = favorites.filter(i => i.type !== 'tv');
+                                return (
+                                    <div className="p-4 md:p-10 animate-fade-in">
+                                        <div className="mb-6 flex items-center gap-3 border-b border-white/10 pb-4">
+                                            <div className="p-2 bg-[#E50914]/20 rounded-lg text-[#E50914]">
+                                                <Icon name="heart" size={24} fill="currentColor" />
+                                            </div>
+                                            <h2 className="text-2xl font-bold text-white">Estos son sus favoritos</h2>
+                                        </div>
+                                        {favTV.length > 0 && (
+                                            <div className="mb-10">
+                                                <h3 className="text-lg font-semibold text-gray-300 mb-4 pl-2 border-l-4 border-[#E50914]">Canales de TV</h3>
+                                                <div className="bg-[#1f2937]/50 rounded-xl overflow-hidden border border-white/5">
+                                                    {favTV.map(item => (
+                                                        <TvListItem key={item.id} channel={item} isActive={false} isFavorite={true} onToggleFavorite={toggleFavorite} onClick={handlePlay} />
+                                                    ))}
                                                 </div>
                                             </div>
-
-                                            <div className="bg-[#003366] p-10 md:p-14 text-white flex flex-col justify-center relative overflow-hidden">
-                                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-                                                <div className="relative z-10">
-                                                    <h3 className="text-2xl font-bold mb-6">¿Tienes WhatsApp?</h3>
-                                                    <p className="text-blue-100 mb-8 leading-relaxed">
-                                                        Escríbenos directamente para consultas rápidas sobre cómo donar o ser voluntario.
-                                                    </p>
-                                                    <a 
-                                                        href={WHATSAPP_LINK} 
-                                                        className="inline-flex w-full justify-center items-center gap-3 py-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95"
-                                                    >
-                                                        <Icons.MessageCircle size={28}/>
-                                                        Chatear Ahora
-                                                    </a>
+                                        )}
+                                        {favOther.length > 0 && (
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-gray-300 mb-4 pl-2 border-l-4 border-blue-500">Películas y Series</h3>
+                                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">
+                                                    {favOther.map((item, i) => (
+                                                        <Card key={i} item={item} onClick={handlePlay} isFavorite={true} onToggleFavorite={toggleFavorite} />
+                                                    ))}
                                                 </div>
+                                            </div>
+                                        )}
+                                        {favorites.length === 0 && (
+                                            <div className="text-center py-20 text-gray-500 flex flex-col items-center">
+                                                <Icon name="heart" size={48} className="mb-4 opacity-20"/>
+                                                <p>Aún no tienes favoritos guardados.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+
+                            // 2. VISTA DE TV (Si estamos en tab TV o viendo un canal)
+                            if (activeTab === 'tv' || (selectedItem && selectedItem.type === 'tv')) {
+                                return (
+                                    <div className="flex flex-col lg:flex-row h-full lg:h-screen lg:overflow-hidden">
+                                        <div className={`flex-1 bg-black relative flex flex-col lg:h-full ${selectedItem && selectedItem.type === 'tv' ? '' : 'hidden lg:flex'}`}>
+                                            {selectedItem && selectedItem.type === 'tv' ? (
+                                                <>
+                                                    <div className="relative aspect-video w-full bg-black lg:flex-1">
+                                                        <button onClick={() => setSelectedItem(null)} className="absolute top-4 left-4 z-20 bg-black/50 p-2 rounded-full text-white lg:hidden">
+                                                            <Icon name="arrowLeft" size={20} />
+                                                        </button>
+                                                        {isDriveLink ? (
+                                                            <div className="iframe-container"><iframe src={playUrl} allow="autoplay; encrypted-media; fullscreen" allowFullScreen></iframe></div>
+                                                        ) : (
+                                                            <video ref={videoRef} className="w-full h-full" controls autoPlay playsInline />
+                                                        )}
+                                                    </div>
+                                                    <div className="p-4 bg-[#1f2937] border-b border-white/10">
+                                                        <h2 className="text-lg font-bold text-white">{selectedItem.title}</h2>
+                                                        <p className="text-xs text-[#E50914] font-bold uppercase">En Vivo Ahora</p>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-gray-500">
+                                                    <p>Selecciona un canal para ver</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="w-full lg:w-96 bg-[#111827] lg:border-l border-white/10 flex flex-col lg:h-full lg:overflow-hidden">
+                                            <div className="p-4 sticky top-16 lg:top-0 bg-[#111827] z-20 border-b border-white/5">
+                                                <div className="relative">
+                                                    <input type="text" placeholder="Buscar canal..." className="w-full bg-[#1f2937] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#E50914] outline-none pl-10" value={search} onChange={(e) => setSearch(e.target.value)}/>
+                                                    <Icon name="search" size={18} className="absolute left-3 top-3 text-gray-400"/>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 space-y-1 lg:overflow-y-auto lg:h-full">
+                                                {loading ? (
+                                                    <div className="flex justify-center py-10"><div className="animate-spin rounded-full h-8 w-8 border-2 border-[#E50914] border-t-transparent"></div></div>
+                                                ) : (
+                                                    (activeTab === 'tv' ? content.tv : favorites.filter(f => f.type === 'tv')).filter(c => !search || c.title.toLowerCase().includes(search.toLowerCase())).map((channel) => (
+                                                        <TvListItem key={channel.id} channel={channel} isActive={selectedItem?.id === channel.id} isFavorite={favorites.some(f => f.id === channel.id)} onToggleFavorite={toggleFavorite} onClick={handlePlay} />
+                                                    ))
+                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <Footer />
+                                );
+                            }
+
+                            // 3. VISTA DE REPRODUCTOR NORMAL (Series/Pelis)
+                            if (selectedItem) {
+                                return (
+                                    <div className="animate-fade-in">
+                                        <div className="w-full bg-black relative aspect-video md:h-[70vh] flex items-center justify-center">
+                                            <div className="absolute top-4 left-4 z-20">
+                                                <button onClick={() => {setSelectedItem(null); setIsLocked(false);}} className="bg-black/50 hover:bg-[#E50914] text-white px-4 py-2 rounded-full backdrop-blur-md flex items-center gap-2 transition-colors border border-white/10">
+                                                    <Icon name="arrowLeft" size={18} /> <span className="hidden md:inline">Volver</span>
+                                                </button>
+                                            </div>
+                                            {isLocked ? (
+                                                <LockScreen correctCode={selectedItem.codigo || selectedItem.password || selectedItem.pin} onUnlock={() => setIsLocked(false)} onCancel={() => {setSelectedItem(null); setIsLocked(false);}} />
+                                            ) : (
+                                                isDriveLink ? (
+                                                    <div className="iframe-container">
+                                                        <iframe src={playUrl} allow="autoplay; encrypted-media; fullscreen" allowFullScreen></iframe>
+                                                        <a href={playUrl} target="_blank" rel="noopener noreferrer" className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-xs flex items-center gap-1 hover:bg-[#E50914] z-50 border border-white/20"><Icon name="external" size={12} /> Abrir externo</a>
+                                                    </div>
+                                                ) : (
+                                                    <video ref={videoRef} className="w-full h-full" controls autoPlay playsInline />
+                                                )
+                                            )}
+                                            {selectedItem.type === 'series' && !selectedEpisode && !isLocked && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
+                                                    <p className="text-gray-400 font-bold">Selecciona un episodio de la lista</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {!isLocked && (
+                                            <div className="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                                <div className="lg:col-span-2">
+                                                    <div className="flex items-start justify-between mb-4">
+                                                        <div>
+                                                            <h1 className="text-3xl font-bold text-white mb-2">{selectedItem.title || selectedItem.name}</h1>
+                                                            <div className="flex items-center gap-3 text-sm text-gray-400">
+                                                                <span className="bg-[#1f2937] px-2 py-0.5 rounded text-white">{selectedItem.type.toUpperCase()}</span>
+                                                                {selectedItem.type === 'series' && selectedEpisode && <span className="text-[#E50914] font-medium">{selectedEpisode.title}</span>}
+                                                            </div>
+                                                        </div>
+                                                        <button onClick={() => toggleFavorite(selectedItem)} className="p-3 bg-[#1f2937] rounded-full hover:bg-[#2d3748]">
+                                                            <Icon name="heart" size={24} className={favorites.some(f => (f.id||f.title) === (selectedItem.id||selectedItem.title)) ? "text-[#E50914] fill-[#E50914]" : "text-gray-400"} fill={favorites.some(f => (f.id||f.title) === (selectedItem.id||selectedItem.title)) ? "#E50914" : "none"} />
+                                                        </button>
+                                                    </div>
+                                                    <p className="text-gray-300 leading-relaxed mb-6">{selectedItem.description || selectedItem.plot || "Sin descripción disponible."}</p>
+                                                </div>
+                                                <div className="bg-[#1f2937] rounded-xl p-4 h-fit border border-white/5">
+                                                    {selectedItem.type === 'series' ? (
+                                                        <div className="flex flex-col gap-2">
+                                                            <h3 className="font-bold text-lg mb-2 flex items-center gap-2"><Icon name="film" size={18} className="text-[#E50914]"/> Temporadas</h3>
+                                                            {selectedItem.seasons.map((season, idx) => (
+                                                                <div key={idx} className="border-b border-gray-700 last:border-0 pb-2">
+                                                                    <button type="button" onClick={() => setExpandedSeason(expandedSeason === idx ? null : idx)} className="w-full flex justify-between items-center py-2 text-sm font-bold hover:text-[#E50914]">
+                                                                        <span>Temporada {season.season_number}</span>
+                                                                        {expandedSeason === idx ? <Icon name="chevronUp" size={16}/> : <Icon name="chevronDown" size={16}/>}
+                                                                    </button>
+                                                                    {expandedSeason === idx && (
+                                                                        <div className="flex flex-col gap-1 mt-1 pl-2">
+                                                                            {season.episodes.length === 0 && <p className="text-xs text-gray-500 p-2">No hay episodios disponibles.</p>}
+                                                                            {season.episodes.map((ep, eIdx) => (
+                                                                                <div key={eIdx} onClick={() => { setSelectedEpisode(ep); window.scrollTo({top:0, behavior:'smooth'}); }} className={`text-sm p-2 rounded cursor-pointer truncate flex items-center gap-2 ${selectedEpisode?.url === ep.url ? 'bg-[#E50914] text-white' : 'text-gray-400 hover:bg-gray-700'}`}>
+                                                                                    <Icon name="play" size={12} fill="currentColor" className="flex-shrink-0" /> {eIdx + 1}. {ep.title}
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <h3 className="font-bold mb-4 text-gray-200">Recomendados</h3>
+                                                            <div className="flex flex-col gap-3">
+                                                                {content[selectedItem.type === 'tv' ? 'tv' : 'movies'].slice(0, 5).map(rel => (
+                                                                    <div key={rel.id || rel.title} onClick={() => handlePlay(rel)} className="flex gap-3 cursor-pointer group">
+                                                                        <img src={rel.image || rel.poster} className="w-20 h-12 object-cover rounded bg-gray-800" />
+                                                                        <div className="flex flex-col justify-center">
+                                                                            <h4 className="text-sm font-bold line-clamp-1 group-hover:text-[#E50914]">{rel.title}</h4>
+                                                                            <span className="text-xs text-gray-500">Ver ahora</span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+
+                            // 4. VISTA POR DEFECTO (HOME/GRID)
+                            return (
+                                <>
+                                    {activeTab === 'home' && <Snow />}
+                                    <div className="sticky top-0 z-40 bg-[#111827]/95 backdrop-blur py-4 px-6 md:px-10 flex items-center justify-between border-b border-[#1f2937]">
+                                        <div className="flex bg-[#1f2937] border border-[#374151] rounded-full px-4 py-2 w-full max-w-lg items-center focus-within:border-[#E50914] transition-colors">
+                                            <Icon name="search" className="text-gray-400 w-5 h-5 mr-3" />
+                                            <input type="text" placeholder={`Buscar en ${activeTab === 'home' ? 'todo' : activeTab}...`} className="bg-transparent w-full outline-none text-sm placeholder-gray-500 text-white" value={search} onChange={(e) => setSearch(e.target.value)}/>
+                                        </div>
+                                        <div className="hidden md:flex items-center gap-4 ml-4">
+                                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{activeTab}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* --- AVISO SMART VIEW --- */}
+                                    {activeTab === 'home' && !search && (
+                                        <div className="mx-4 md:mx-10 mt-6 p-4 rounded-xl bg-gradient-to-r from-blue-900/40 to-[#111827] border border-blue-500/30 flex items-center gap-4 animate-fade-in">
+                                            <div className="hidden md:flex p-3 bg-blue-600/20 rounded-full text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                                                <Icon name="tv" size={24} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                                                    <span className="md:hidden text-blue-400"><Icon name="tv" size={20}/></span>
+                                                    Disfrútalo en tu Smart TV
+                                                </h3>
+                                                <p className="text-gray-300 text-sm mt-1">
+                                                    Usa la función <strong className="text-blue-400">Smart View</strong> (o "Transmitir") de tu móvil para conectar y ver el contenido en tu televisor.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'home' && !search && heroItem && <HeroSection item={heroItem} onPlay={handlePlay} isFavorite={favorites.some(f=>(f.id||f.title)===(heroItem.id||heroItem.title))} onToggleFavorite={toggleFavorite}/>}
+                                    <div className="p-4 md:p-10">
+                                        {activeTab === 'home' && !search && (
+                                            <div className="mb-8 flex items-center gap-2">
+                                                <div className="w-1 h-6 bg-[#E50914] rounded-full"></div>
+                                                <h2 className="text-xl font-bold">Tendencias Recientes</h2>
+                                            </div>
+                                        )}
+                                        {loading ? (
+                                            <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-4 border-[#E50914] border-t-transparent"></div></div>
+                                        ) : displayedItems.length === 0 ? (
+                                            <div className="text-center py-20 text-gray-500 flex flex-col items-center">
+                                                <Icon name="alertCircle" size={48} className="mb-4 opacity-50"/>
+                                                <p>No hay contenido disponible en esta sección.</p>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8 animate-slide-up">
+                                                {displayedItems.map((item, i) => (
+                                                    <Card key={i} item={item} onClick={handlePlay} isFavorite={favorites.some(f => (f.id||f.title) === (item.id||item.title))} onToggleFavorite={toggleFavorite}/>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            );
+                        })()}
+                    </main>
                 </div>
             );
         };
